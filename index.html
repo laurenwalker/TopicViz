@@ -1,6 +1,27 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
 
-// Draw a ring to display topic categories
-var categoriesFile = '/data/categories.csv';
+body {
+  font: 10px sans-serif;
+}
+
+.arc path {
+  stroke: #fff;
+}
+
+</style>
+<body>
+<script src="d3/d3.js"></script>
+
+
+<style type="text/css">
+svg-class {
+    color: white;
+}
+</style>
+
+<script>
 
 var width = 960,
     height = 500,
@@ -23,7 +44,7 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-d3.csv(categoriesFile, function(error, data) {
+d3.csv("data.csv", function(error, data) {
 
   data.forEach(function(d) {
     d.count = +d.count;
@@ -45,3 +66,7 @@ d3.csv(categoriesFile, function(error, data) {
       .text(function(d) { return d.data.category; });
 
 });
+
+
+</script>
+</html>
