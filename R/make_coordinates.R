@@ -14,9 +14,10 @@ JSD = function(P, Q){
 distances = dist(tab)
 
 xy = tsne(distances, whiten = TRUE)
-row.names(xy) = full_tab$primaryKey
 
 write(
-  toJSON(as.data.frame(t(xy)), 
+  toJSON(
+    structure(as.data.frame(t(xy)), names = as.character(full_tab$primaryKey))    
+  ), 
   file = "data/xy.json"
 )
