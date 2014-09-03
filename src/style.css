@@ -1,0 +1,13 @@
+	body {
+	  font: 12px sans-serif;
+	}
+	
+	.arc path {
+	  stroke: #fff;
+	}
+	svg-class {
+	    color: white;
+	}
+	.arc text{
+		fill: #FFFFFF;
+	}
