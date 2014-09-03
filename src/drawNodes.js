@@ -24,10 +24,12 @@ jQuery(document).ready(function($) {
 				var d = {
 					x: coords[key][0],
 					y: coords[key][1],
+					px: coords[key][0],
+					py: coords[key][1],
 					key: key,
 					cluster: category100,
 					color: category20,
-					radius: 3.5
+					radius: 4
 				};
 				if (!clusters[i] || (r > clusters[i].radius)) clusters[i] = d;
 				nodes.push(d);
@@ -35,8 +37,8 @@ jQuery(document).ready(function($) {
 			
 			//Set up the dimensions of our svg drawing
 			var width = 960, height = 800, margin = {left: 160, right: 160, top: 100, bottom: 100};
-			var padding = 1, // separation between same-color nodes
-		    clusterPadding = 10, // separation between different-color nodes
+			var padding = .5, // separation between same-color nodes
+		    clusterPadding = 2, // separation between different-color nodes
 		    maxRadius = 12;
 			
 			//Find the min and max values 
@@ -57,28 +59,14 @@ jQuery(document).ready(function($) {
 			  
 			var n = keys.length, // total number of nodes
 		    	m = 16; // number of distinct clusters
-
-
-		/*var nodes = d3.range(n).map(function() {
-		  var i = Math.floor(Math.random() * m),
-		      r = 3.5,
-		      d = {
-		        cluster: i,
-		        radius: r,
-		        x: Math.cos(i / m * 2 * Math.PI) * 200 + width / 2 + Math.random(),
-		        y: Math.sin(i / m * 2 * Math.PI) * 200 + height / 2 + Math.random()
-		      };
-		  if (!clusters[i] || (r > clusters[i].radius)) clusters[i] = d;
-		  return d;
-		});*/
 		
 		var force = d3.layout.force()
 	    .nodes(nodes)
-	    .size([width, height])
-	    .gravity(.02)
-	    .charge(0)
-	    .chargeDistance(10)
-	    .theta(.01)
+	    .size([width , height])
+	    .gravity(.80)
+	    //.charge(10)
+	    //.chargeDistance(10)
+	    //.theta(.01)
 	    .on("tick", tick)
 	    .start();
 		
@@ -89,8 +77,8 @@ jQuery(document).ready(function($) {
 		var node = svg.selectAll("circle")
 	    .data(nodes)
 	  .enter().append("circle")
-	    .style("fill", function(d) { return colors[d.color]; })
-	    .call(force.drag);
+	    .style("fill", function(d) { return colors[d.color]; });
+	    //.call(force.drag);
 
 	node.transition()
 	    .duration(5)
@@ -99,31 +87,6 @@ jQuery(document).ready(function($) {
 	      var i = d3.interpolate(0, d.radius);
 	      return function(t) { return d.radius = i(t); };
 	    });
-			
-			//Draw a circle for each data point
-	/*		 var circles = d3.select("svg")
-			  .selectAll("circle")
-		      .data(table)
-		      .enter()
-		      .append("circle")
-		      .attr("class", "dot")
-		      .attr("r", 3.5) //3.5 pixel radius
-		      //Use our x and y scales that were created earlier to find the pixel value of the coordinates
-		      .attr("transform", function(d) { 
-		    	  //Get the coordinates for this point using the key
-		    	  var x = coords[d.primaryKey][0],
-		    	  	  y = coords[d.primaryKey][1];
-		    	  return "translate(" + xScale(x) + "," + yScale(y) + ")"; 
-		       })
-		       .attr("x", function(d){ return xScale(coords[d.primaryKey][0]); })
-		       .attr("y", function(d){ return yScale(coords[d.primaryKey][1]); })
-		      .attr("fill", function(d){ 
-		    	  var category = d.maxtopic20selected_id,
-		    	  	  color = colors[category];
-		    	  return color;
-		      })
-		      .call(force.drag);
-		*/
 
 			function tick(e) {
 			  node
