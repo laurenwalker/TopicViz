@@ -2,7 +2,8 @@ library(tsne)
 library(rjson)
 
 full_tab = read.table("data/table.tab", header = TRUE, sep = "\t")
-tab = full_tab[, grep("^lda", colnames(full_tab))]
+tab = full_tab[, grep("^lda020", colnames(full_tab))]
+
 
 distances = dist(tab)
 

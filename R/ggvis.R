@@ -1,8 +1,3 @@
-library(rjson)
-
-full_tab = read.table("data/table.tab", header = TRUE, sep = "\t")
-tab = full_tab[, grep("^lda", colnames(full_tab))]
-
 # kmpp function from Hans W Borchers on the R Help list
 # https://stat.ethz.ch/pipermail/r-help/2012-January/300051.html
 library(pracma)
@@ -20,7 +15,7 @@ kmpp <- function(X, k) {
   kmeans(X, X[C, ])
 }
 
-km = kmpp(as.matrix(tab), 25)
+km = kmpp(as.matrix(tab), 16)
 
 
 
