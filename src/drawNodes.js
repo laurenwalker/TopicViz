@@ -1,7 +1,7 @@
 jQuery(document).ready(function($) {
 	
 	//Get the JSON with the x,y coords
-	$.getJSON("data/xy.json", function(coords){
+	$.getJSON("data/xy_top100.json", function(coords){
 		d3.tsv("data/table.tsv", function(err, table){
 		
 			console.log(table);
