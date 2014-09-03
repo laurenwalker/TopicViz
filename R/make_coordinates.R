@@ -32,7 +32,7 @@ dat = cbind(
   cluster = as.factor(full_tab[ , "maxtopic20selected_id"]),
   subcluster = full_tab[ , "maxtopic100selected_id"],
   full_tab[ , grep("lda020selected_topicWeights", colnames(full_tab))],
-  title = full_tab$TI
+  title = paste0(full_tab$TI, full_tab$Title_for_TM)
 )
 colnames(dat)[1:2] = c("x", "y")
 
@@ -58,19 +58,36 @@ dat %>%
   ggvis(~x, ~y, fill = ~cluster, shape = ~cluster, key := ~id) %>% 
   layer_points(
     size := input_checkboxgroup(
-      choices = 1:16,
+      choices = c(
+        "Statistics and modeling" = 1,
+        "conservation" = 2,
+        "management" = 3,
+        "marine ecology" = 4,
+        "community ecology and biodiversity" = 5,
+        "climate change" = 6,
+        "pollination and dispersal" = 7,
+        "population ecology" = 8,
+        "biogeography and scaling rules" = 9,
+        "ecosystem ecology" = 10,
+        "species interactions" = 11,
+        "paleoecology" = 12, 
+        "evolutionary ecology" = 13,
+        "forest ecology???" = 14,
+        "disturbance and invasive species" = 15,
+        "pathogens and parasites" = 16
+      ),
       map = function(x){
         if(length(x) == 0){
-          return(4)
+          return(8)
         }
         affinities = lapply(
           x, 
           function(check){
-            full_tab[ , grep(paste0("_\\.?", check, "$"), colnames(dat))]
+            full_tab[ , grep(paste0("lda020selected_topicWeights_\\.?", check, "$"), colnames(full_tab))]
           }
         )
         sizes = apply(do.call(cbind, affinities), 1, prod)
-        sizes = sizes / sum(sizes) * length(sizes) * 4
+        sizes = (sizes + mean(sizes) / 2) / mean(sizes) * 5
       }
     )
   ) %>%
@@ -79,7 +96,7 @@ dat %>%
     function(x){
       paste0(
         "This point belongs to <b>group ",
-        x$cluster,
+        as.numeric(x$cluster),
         "</b><br>Click for more information"
       )
       
