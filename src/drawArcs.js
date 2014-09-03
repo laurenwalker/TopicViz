@@ -33,8 +33,14 @@ jQuery(document).ready(function($) {
 	      .style("fill", function(d) { 
 	    	  //Find the color for this arc by finding it in the category->color map
 	    	  return colors[d.data["topic after removal"]]; 
-	    	});
-	
+	    	})
+              .on("click", function(d){ 
+	          svg.selectAll("path").style("fill", "#F0F0F0");
+	          d3.select(this).style("fill", colors[d.data["topic after removal"]]);
+		  var id = d.data["topic after removal"];
+		  // send id to function
+		  console.log(id);
+	      }); 
 	  //Draw a label on each arc
 	  g.append("text")
 	      .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
@@ -42,7 +48,6 @@ jQuery(document).ready(function($) {
 	      .style("text-anchor", "middle")
 	      .text(function(d) { 
 	    	  var length = d.data.words.indexOf(" ");
-	    	  
 	    	  return d.data.words.substring(0, length); 
 	       });
 	
