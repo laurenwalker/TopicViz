@@ -40,7 +40,11 @@ jQuery(document).ready(function($) {
 	      .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
 	      .attr("dy", ".35em")
 	      .style("text-anchor", "middle")
-	      .text(function(d) { return d.data.category; });
+	      .text(function(d) { 
+	    	  var length = d.data.words.indexOf(" ");
+	    	  
+	    	  return d.data.words.substring(0, length); 
+	       });
 	
 	});
 	
