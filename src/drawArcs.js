@@ -1,7 +1,7 @@
  
 jQuery(document).ready(function($) {
 	
-		var width = 960,
+	var width = 960,
 	    height = 800,
 	    radius = Math.min(width, height) / 2;
 	
@@ -21,18 +21,21 @@ jQuery(document).ready(function($) {
 	
 	d3.tsv("data/Top16Terms.tab", function(error, data) {
 	
+	//Draw a group element to group our arcs
 	  var g = svg.selectAll(".arc")
 	      .data(pie(data))
 	    .enter().append("g")
 	      .attr("class", "arc");
 	
+	  //Draw the path for each arc
 	  g.append("path")
 	      .attr("d", arc)
 	      .style("fill", function(d) { 
-	    	  console.log(colors[d.data["topic after removal"]]);
+	    	  //Find the color for this arc by finding it in the category->color map
 	    	  return colors[d.data["topic after removal"]]; 
 	    	});
 	
+	  //Draw a label on each arc
 	  g.append("text")
 	      .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
 	      .attr("dy", ".35em")

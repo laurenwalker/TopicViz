@@ -2,14 +2,8 @@ library(tsne)
 library(rjson)
 
 full_tab = read.table("data/table.tsv", header = TRUE, sep = "\t")
-tab = full_tab[, grep("^lda100", colnames(full_tab))]
-n = nrow(tab)
+tab = full_tab[, grep("^lda020", colnames(full_tab))]
 
-
-JSD = function(P, Q){
-  M = (P + Q) / 2
-  sqrt(.5 * sum(P * (log(P) - log(M))) + .5 * sum(Q * (log(Q) - log(M))))
-}
 
 distances = dist(tab)
 
