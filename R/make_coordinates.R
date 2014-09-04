@@ -69,7 +69,7 @@ dat %>%
         "population ecology" = 8,
         "biogeography and scaling rules" = 9,
         "ecosystem ecology" = 10,
-        "species interactions" = 11,
+        "trophic interactions" = 11,
         "paleoecology" = 12, 
         "evolutionary ecology" = 13,
         "forest ecology???" = 14,
@@ -91,16 +91,5 @@ dat %>%
       }
     )
   ) %>%
-  add_tooltip(all_values, on = "click") %>%
-  add_tooltip(
-    function(x){
-      paste0(
-        "This point belongs to <b>group ",
-        as.numeric(x$cluster),
-        "</b><br>Click for more information"
-      )
-      
-    }, 
-    on = "hover"
-  )
+  add_tooltip(all_values, on = "hover")
 
