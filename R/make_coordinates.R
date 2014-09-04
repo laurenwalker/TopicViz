@@ -23,7 +23,27 @@ write(
 )
 
 
+categories = c(
+  "Statistics and modeling" = 1,
+  "conservation" = 2,
+  "management" = 3,
+  "marine ecology" = 4,
+  "community ecology and biodiversity" = 5,
+  "climate change" = 6,
+  "pollination and dispersal" = 7,
+  "population ecology" = 8,
+  "biogeography and scaling rules" = 9,
+  "ecosystem ecology" = 10,
+  "trophic interactions" = 11,
+  "paleoecology" = 12, 
+  "evolutionary ecology" = 13,
+  "forest ecology???" = 14,
+  "disturbance and invasive species" = 15,
+  "pathogens and parasites" = 16
+)
 
+
+subcategories = read.csv("data/87topics.csv", header = FALSE)[,2]
 
 # plot --------------------------------------------------------------------
 
@@ -48,8 +68,12 @@ all_values <- function(x) {
     row$title,
     "<br>Group ", 
     row$cluster,
+    ": ",
+    names(categories)[as.integer(as.character(row$cluster))],
     "<br>Subgroup ",
     row$subcluster,
+    ": ",
+    subcategories[row$subcluster],
     '<br><a href = "www.google.com">Here is a link.</a>'
   )
 }
@@ -58,24 +82,7 @@ dat %>%
   ggvis(~x, ~y, fill = ~cluster, shape = ~cluster, key := ~id) %>% 
   layer_points(
     size := input_checkboxgroup(
-      choices = c(
-        "Statistics and modeling" = 1,
-        "conservation" = 2,
-        "management" = 3,
-        "marine ecology" = 4,
-        "community ecology and biodiversity" = 5,
-        "climate change" = 6,
-        "pollination and dispersal" = 7,
-        "population ecology" = 8,
-        "biogeography and scaling rules" = 9,
-        "ecosystem ecology" = 10,
-        "trophic interactions" = 11,
-        "paleoecology" = 12, 
-        "evolutionary ecology" = 13,
-        "forest ecology???" = 14,
-        "disturbance and invasive species" = 15,
-        "pathogens and parasites" = 16
-      ),
+      choices = categories,
       map = function(x){
         if(length(x) == 0){
           return(8)
