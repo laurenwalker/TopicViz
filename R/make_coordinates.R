@@ -37,7 +37,7 @@ categories = c(
   "trophic interactions" = 11,
   "paleoecology" = 12, 
   "evolutionary ecology" = 13,
-  "forest ecology???" = 14,
+  "forest ecology" = 14,
   "disturbance and invasive species" = 15,
   "pathogens and parasites" = 16
 )
