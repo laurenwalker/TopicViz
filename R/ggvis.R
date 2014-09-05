@@ -95,7 +95,7 @@ tooltip <- function(x) {
 }
 
 # Build the plot ----------------------------------------------------------
-avg_size = 15 # The average point should be this large
+avg_size = 10 # The average point should be this large
 floor_size = 2 # Points should all be at least this large
 
 # The %>% ("pipe") operator lets us chain a bunch of commands together.
