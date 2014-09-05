@@ -8,7 +8,9 @@ tab_20 = full_tab[, grep("^lda020", colnames(full_tab))]
 # Subcategories
 tab_100 = full_tab[, grep("^lda100", colnames(full_tab))]
 
-# KL divergence, with zeros removed
+# KL divergence, with zeros removed.
+# KL divergence addresses the question, "How well can a major topic (q)
+# approximate a subcategory (p)?"
 d = matrix(NA, ncol = ncol(tab_100), nrow = ncol(tab_20))
 for(i in 1:ncol(tab_20)){
   for(j in 1:ncol(tab_100)){
