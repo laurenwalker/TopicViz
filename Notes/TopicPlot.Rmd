@@ -1,0 +1,262 @@
+---
+title: "TopicPlot"
+output: html_document
+---
+
+Open Science Codefest 
+TopicVis  
+EDA and Prototyping Fragments Notes
+John MacCuish (Mesa Analytics & Computing, Inc.) 9/4/2014  
+
+Load the libraries and read in the data (mds87topics and table1)
+```{r ReadData, echo=FALSE}
+library(ggplot2)
+library(fpc) #For clustering tools
+library(RColorBrewer)  #ColorBrewer for cooking up a color palette. 
+library(colorRamps) #For help interpolating a few extra colors in RColorBrewer
+library(tsne)
+
+#load the data (note, data was converted to .csv from .tab externally)
+mds87topics <- read.table("mds87topics.csv",header=TRUE, sep=",")
+table1 <- read.table("table1.csv",header=TRUE,fill=TRUE, sep=",")
+```
+
+Jitter the specific topics' to the MDS placements and show convex hull of one general topic
+
+```{r JitterTopics}
+tableRows <- dim(table1)[[1]]
+coords <- matrix(0,nrow=tableRows,ncol=3,byrow=TRUE);
+for(i in 1:tableRows){
+  #2 is added to each coordinate before jittering to expand the default jittering
+  coords[i,1] <- jitter(mds87topics[which(table1[i,2] == 1:87),1]+2,factor=0.7)
+  coords[i,2] <- jitter(mds87topics[which(table1[i,2] == 1:87),2]+2,factor=0.7)
+  coords[i,3] <- table1[i,3] #Get 16 topics to use as colors -- use R default colors
+  }
+#Plot jittered points and show convex hull for topic "2" of 16 topics
+generalTopic <- 2
+plot(coords[,1:2],col= coords[,3],cex=0.3)
+#Find convex hull that surrounds generalTopic 2
+hull <- cbind(coords[coords[,3]==generalTopic,1],coords[coords[,3]==generalTopic,2])
+hpts <- chull(hull)
+hpts <- c(hpts,hpts[1])
+lines(hull[hpts,1], hull[hpts,2], lty=2)
+```
+
+
+Create a more sophisticated plot with ggplot and show the convex hull as a filled polygon.
+```{r ggplot2Hull}
+#Create data frame for ggplot
+coords.df <- data.frame(coords)
+#Add in column names
+dimnames(coords.df)[[2]] <- c("x", "y", "Colors")
+
+#Topic number of the 16 topics to generate the convex hull with transparent fill.
+topicPolygon <- 6 #Use general topic 6
+#Find convex hull
+hull <- cbind(coords.df[coords.df[,3]==topicPolygon,1],
+              coords.df[coords.df[,3]==topicPolygon,2])
+indices <- which(coords.df[,3]==topicPolygon) #Needed for ggplot subsetting of data frame.
+hpts <- chull(hull)
+hpts <- c(hpts,hpts[1])
+
+ggplot(coords.df, aes(x=x, y=y))+
+  ggtitle("Topics")+
+  geom_point(alpha=0.1, color=coords.df[,3])+
+  geom_point(data=coords.df[indices,1:2], alpha=0.99, color=topicPolygon)+
+  geom_polygon(data=coords.df[indices[hpts],1:2], fill=topicPolygon,alpha=0.2)+
+  xlab("MDS Dim 1")+
+  ylab("MDS Dim 2")
+```
+
+Represent the data as a coclustering with heat map of the cross table between the specific topics and the general topics.
+```{r coclustering}
+#Create cross table of 16 topics with 87 topics
+crossTable <- table(table1[,2:3]) #87 rows by 16 columns
+#Create wrapper function for hclust input to heatmap
+#Use Ward's Hierarchical Clustering as a first pass for both rows and colunms of the heatmap
+hclustwards <- function(x) hclust(x,method = "ward.D2") 
+par(cex=0.6) #Set the font size small enough to make out numbers (almost)
+maxcrossTable <- max(crossTable) #Set grayscale to the maximum number of articles in the (i,j) entries of the cross table. 
+
+heatmap(table(table1[,2:3]),hclustfun = hclustwards,
+        col=gray(seq(0.9,0.0,length=maxcrossTable)),
+        xlab="16 General Topics",ylab="87 Specific Topics")
+
+#Explore other hierarchical methods for both row and column space by looking at the cophenetic correlation of each method
+#Get the distance matrix for the 87 topics (rows)
+DM <- dist(crossTable)
+
+cor(DM, cophenetic(hclust(DM,method="complete")))
+cor(DM, cophenetic(hclust(DM,method="single")))
+cor(DM, cophenetic(hclust(DM,method="average")))
+cor(DM, cophenetic(hclust(DM,method="centroid")))
+cor(DM, cophenetic(hclust(DM,method="ward.D2")))
+
+TDM <- dist(t(crossTable)) #Transpose the cross table to get the distance matrix of the 16 topics.
+cor(TDM, cophenetic(hclust(TDM,method="complete")))
+cor(TDM, cophenetic(hclust(TDM,method="single")))
+cor(TDM, cophenetic(hclust(TDM,method="average")))
+cor(TDM, cophenetic(hclust(TDM,method="centroid")))
+cor(TDM, cophenetic(hclust(TDM,method="ward.D2")))
+
+#Color the individual topics to distinguish the rows and columns of the heatmap
+getPalette = colorRampPalette(brewer.pal(12, "Paired"))
+colorPaletteCol <- getPalette(16)
+colorPaletteRow <- getPalette(87)
+
+#Take the methods with the best cophenetic correlation for both the row space and the column space
+clusterMethodRow <- "centroid"
+clusterMethodCol <- "average"
+heatmap(crossTable,
+  Rowv = as.dendrogram(hclust(DM,method=clusterMethodRow)),
+  Colv = as.dendrogram(hclust(TDM,method=clusterMethodCol)),
+  col=gray(seq(0.9,0.0,length=maxcrossTable)),
+  RowSideColors = colorPaletteRow,
+  ColSideColors = colorPaletteCol,
+  xlab=paste(clusterMethodRow,"clustering\n","16 General Topics"),
+  ylab=paste(clusterMethodCol,"clustering\n","87 Specific Topics"))
+
+#The centroid method leads to crossover in the dendrogram do to the lack of monotonicity.  Using the "average" method as the next best cophenetic correlation, the heatmap looks the same but differs in small ways. 
+
+heatmap(crossTable,
+  Rowv = as.dendrogram(hclust(DM,method=clusterMethodCol)),
+  Colv = as.dendrogram(hclust(TDM,method=clusterMethodCol)),
+  col=gray(seq(0.9,0.0,length=maxcrossTable)),
+  RowSideColors = colorPaletteRow,
+  ColSideColors = colorPaletteCol,
+  xlab=paste(clusterMethodCol,"clustering\n","16 General Topics"),
+  ylab=paste(clusterMethodCol,"clustering\n","87 Specific Topics"))
+
+#Another way to look at the cross table is to treat the topics as factors and use correspondence analysis.
+
+library(ca)
+fit <- ca(crossTable)
+plot(fit) 
+#Note that general topics (in red) 12 and 16 appear to be well separated from the others and associated with somewhat distinct groups of specific topics (in blue), whereas the remaining topics are spread rather uniformly throughout the specific topics.
+```
+
+
+Layout 87 topics based on MDS of cross table.  Color per 16 general topics
+```{r MDSofCrossTable}
+maxtopic20Mat <- table1[,4:19]
+maxtopic100Mat <- table1[,20:106]
+color16Space <- numeric(87)
+for(i in 1:87){#Vanilla R colors, skipping black.
+  color16Space[i] <- which(max(crossTable[i,]) == crossTable[i,])[1]+1
+}
+#the "[1]" at the end of "which()" call is for the fact that there are an occasional duplicate(s) in the finding the max.  This leads, by the way, to ambiguity in any clustering results, common among clusterings of course-grained discrete values.  Clusterings will not be necessarily unique or invariant to input order.
+
+#To see the duplicates:
+#for(i in 1:87){print(which(max(crossTable[i,]) == crossTable[i,]))}
+
+tsneTopics <- tsne(crossTable)                 
+plot(tsneTopics,pch = 19, col=color16Space)
+
+#To show tsne adjusting each epoch,
+#ecb = function(x,y){ plot(x,t='n'); points(x, col=color16Space)}
+#tsneTopics <- tsne(crossTable,epoch_callback = ecb)                   
+#plot(tsneTopics,col=color16Space)
+
+```
+
+Show onion layers of convex hull of a general topic over the tsne MDS of the cross table.  
+Color Brewer is used to generate the 16 colors.
+```{r ConvexHullOnionLayers}
+#Jitter MDS coordinates found for the 87 specific topics via the tsne MDS of the topic cross table
+coords.tsne <- matrix(0,nrow=tableRows,ncol=3,byrow=TRUE);
+for(i in 1:tableRows){
+  #2 is added to each coordinate before jittering to expand the default jittering
+  coords.tsne[i,1] <- jitter(tsneTopics[which(table1[i,2] == 1:87),1],factor=2)
+  coords.tsne[i,2] <- jitter(tsneTopics[which(table1[i,2] == 1:87),2],factor=2)
+  coords.tsne[i,3] <- table1[i,3] #Get 16 colors
+  }
+#Plot jittered points and show convex hull for topic "8" of 16 topics
+#First interpolate colors from color brewer palette of 12 colors to get 16 colors
+colorPalette <- getPalette(16) #Same as above
+coords.tsne <- data.frame(coords.tsne)
+#Add in column names
+dimnames(coords.tsne)[[2]] <- c("x", "y", "Colors")
+
+topicPolygon <- 8 #Example topic number of the 16 topics to generate the convex hull with transparent fill.
+#Create first hull
+hull <- cbind(coords.tsne[coords.tsne[,3]==topicPolygon,1],
+              coords.tsne[coords.tsne[,3]==topicPolygon,2])
+indices <- which(coords.tsne[,3]==topicPolygon) #Needed for ggplot subsetting of data frame.
+hpts <- chull(hull)
+hpts <- c(hpts,hpts[1])
+
+#Create function to get the new convex hull onion layer from previous onion layer
+onionLayer <- function(indices, hull, hpts){
+  hull2 <- hull[-hpts,]
+  indices2 <- indices[-hpts] 
+  hpts2 <- chull(hull2)
+  list(indices2, hull2, c(hpts2,hpts2[1]))
+}
+
+#Generate 4 onion layers aside from the first hull
+AnOnionLayer1 <- onionLayer(indices, hull, hpts)
+indicesHptsLayer1 <- AnOnionLayer1[[1]][AnOnionLayer1[[3]]]
+AnOnionLayer2 <- onionLayer(AnOnionLayer1[[1]], AnOnionLayer1[[2]], AnOnionLayer1[[3]])
+indicesHptsLayer2 <- AnOnionLayer2[[1]][AnOnionLayer2[[3]]]
+AnOnionLayer3 <- onionLayer(AnOnionLayer2[[1]], AnOnionLayer2[[2]], AnOnionLayer2[[3]])
+indicesHptsLayer3 <- AnOnionLayer3[[1]][AnOnionLayer3[[3]]]
+AnOnionLayer4 <- onionLayer(AnOnionLayer3[[1]], AnOnionLayer3[[2]], AnOnionLayer3[[3]])
+indicesHptsLayer4 <- AnOnionLayer4[[1]][AnOnionLayer4[[3]]]
+
+#Plot all jittered points with the tsne 87 point layout and show the convex hull and 4 interior convex hull onion layers
+polygonFillColor <- colorPalette[topicPolygon] 
+ggplot(coords.tsne, aes(x=x, y=y))+
+    ggtitle("Topics")+
+    geom_point(position = position_jitter(w=5,h=5),alpha=0.4, 
+                          color=colorPalette[coords.tsne[,3]])+
+    geom_point(data=coords.tsne[indices,1:2], alpha=0.99, color=polygonFillColor)+
+    geom_polygon(data=coords.tsne[indices[hpts],1:2], 
+                 fill=polygonFillColor,alpha=0.2)+
+    geom_polygon(data=coords.tsne[indicesHptsLayer1,1:2], 
+                 fill=polygonFillColor,alpha=0.2)+
+    geom_polygon(data=coords.tsne[indicesHptsLayer2,1:2], 
+                 fill=polygonFillColor,alpha=0.2)+
+    geom_polygon(data=coords.tsne[indicesHptsLayer3,1:2], 
+                 fill=polygonFillColor,alpha=0.2)+
+    geom_polygon(data=coords.tsne[indicesHptsLayer4,1:2], 
+                 fill=polygonFillColor,alpha=0.2)+
+    xlab("MDS Dim 1")+
+    ylab("MDS Dim 2")
+```
+
+Various cluster analysis method tries to inspect relationship between the general and specific topics.  The 87 and 16 topics can be used as classes to compare the clusterings in a supervised manner.  Just the 16 topics data is used below.
+
+```{r clusterAnalysis}
+kmeansClustered20 <- pamk(maxtopic20Mat,krange = 16,criterion="multiasw",ns=10)
+
+#To try 87 topics, see if there is a best k in a small inclusive range, then test for k=87 directly
+#kmeansClustered20 <- pamk(maxtopic100Mat,krange = 80:95,criterion="multiasw",ns=10)
+#dbscan does not work well in this context (scaled or otherwise):  difficult to find parameters and too many singleton clusters (noise) appear.  May be due to the high dimensions.
+#dbscanmax20 <- dbscan(maxtopic20Mat, eps = 0.1, MinPts = 2, method = "raw")
+
+#Show the misclassification error 
+classError(kmeansClustered20[[1]]$clustering,table1[,3])$errorRate
+
+#Find best hierarchical clustering method that cuts the dendrogram at 16 clusters but checking the error rate with 16 topics.
+maxtopic20Dist <- dist(maxtopic20Mat)
+Hmethods <- c("average", "single", "complete", "centroid", "ward.D2")
+print("Hierarchical error rates for a cut at 16 clusters")
+for(i in 1:5){
+  print(paste(Hmethods[i]," = ",
+              classError(cutree(hclust(maxtopic20Dist,Hmethods[i]),16),table1[,3])$errorRate))
+}
+#The hierarchical cut at 16 clusters has a pretty dismal error rate with the exception of Ward's clustering, the cophenetic correlations for the entire hierarchies notwithstanding! -- which shows that a single partition may or may not be good with respect to the entire hierarchy or vice versa.
+
+#Color 16 topics with kmeans as it has the lowest error rate (avoid black)
+coords.df[,3] <- kmeansClustered20[[1]]$clustering + 1
+ggplot(coords.tsne, aes(x=x, y=y))+
+  ggtitle("Topics")+
+  geom_point(position = position_jitter(w=10,h=10), color=coords.df[,3])+
+  xlab("MDS Dim 1")+
+  ylab("MDS Dim 2")
+
+#Return coords.df to original state
+coords.df[,3] <- coords[,3]
+```
+
+
