@@ -34,7 +34,6 @@ jQuery(document).ready(function($) {
 				    .append("g")
 				    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 				
-				
 				drawArcs();
 				drawNodes();
 				
@@ -99,9 +98,9 @@ jQuery(document).ready(function($) {
 					
 					  //Draw a label on each arc
 					  g.append("text")
-					   .attr("dx", "20")
+					   .attr("dx", "5")
+					   .attr("dy", "-10")
 					   .append("textPath")
-			      //   .attr("dy", ".35em")
 			   	       .text(function(d) { 
 			        	  var category = d.data[categoryID];
 			        	  

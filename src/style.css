@@ -1,12 +1,11 @@
-	
+	body{
+		background-color: #000;
+	}
 	.arc path {
-	  stroke: #fff;
+	  stroke: #FFF;
 	}
-	svg-class {
-	    color: white;
-	}
-	.arc textPath{
-		stroke: #999;
+	.arc text{
+		fill: #FFF;
 		font-size: 15px;
 		font-family: sans-serif;
 	}

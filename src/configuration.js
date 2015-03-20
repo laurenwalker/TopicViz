@@ -23,22 +23,22 @@
 	
 	// Create unique names for each categroy that summarize the list of terms
 	var categories = {
- 		  1:"Statistics and modeling",
- 		  2:"Conservation",
-		  3:"Management" ,
-		  4:"Marine ecology",
-		  5:"Community ecology and biodiversity",
-		  6:"Climate Change",
-		  7:"pollination and dispersal",
-		  8:"population ecology",
-		  9:"biogeography and scaling rules",
-		  10:"ecosystem ecology",
-		  11:"trophic interactions",
-		  12:"paleoecology", 
-		  13:"evolutionary ecology",
-		  14:"forest ecology???",
-		  15:"disturbance and invasive species",
-		  16:"pathogens and parasites"
+ 		  1:"Informatics, Modeling & Analytics",
+ 		  2:"Biodiversity Conservation & Management",
+		  3:"Ecosystem Services" ,
+		  4:"Marine Ecology and Resources Management",
+		  5:"Community Ecology",
+		  6:"Ecological Effects of Climate Change",
+		  7:"Landscape Ecology",
+		  8:"Population Dynamics",
+		  9:"Biogeography",
+		  10:"Nutrient Cycling and Productivity",
+		  11:"Foodweb Ecology",
+		  12:"Paleoecology", 
+		  13:"Evolution",
+		  14:"Forest Ecology",
+		  15:"Disturbances and Invasive Species",
+		  16:"Infectious Disease"
 	}
 	
 	var configuration = {
