@@ -21,29 +21,59 @@
 			16: "#9977BB"
 	}
 	
-	// Create unique names for each categroy that summarize the list of terms
-	var categories = {
- 		  1:"Informatics, Modeling & Analytics",
- 		  2:"Biodiversity Conservation & Management",
-		  3:"Ecosystem Services" ,
-		  4:"Marine Ecology and Resources Management",
-		  5:"Community Ecology",
-		  6:"Ecological Effects of Climate Change",
-		  7:"Landscape Ecology",
-		  8:"Population Dynamics",
-		  9:"Biogeography",
-		  10:"Nutrient Cycling and Productivity",
-		  11:"Foodweb Ecology",
-		  12:"Paleoecology", 
-		  13:"Evolution",
-		  14:"Forest Ecology",
-		  15:"Disturbances and Invasive Species",
-		  16:"Infectious Disease"
-	}
+	// Create unique names for each category that summarize the list of terms
+	var categoryLabels = [
+ 		  {id: 1,
+ 		   text: "Informatics, Models"},
+ 		  {id: 1, 
+ 		   text: "& Analytics"},
+ 		  {id: 2,
+ 		   text: "Biodiversity"},
+ 		  {id: 2,
+ 		   text: "Conservation"},
+		  {id: 3,
+ 		   full: "Ecosystem Services",
+		   text: "Ecosystem Services"},
+		  {id: 4,
+		   text: "Marine Ecology"}, 
+		  {id: 4,
+		   text: "and Resources"},
+		  {id: 5,
+		   full: "Community Ecology",
+		   text: "Community Ecology"},
+		  {id: 6,
+		   text: "Ecological Effects"},
+		  {id: 6,
+		   text: "of Climate Change"},
+		  {id: 7,
+		   text: "Landscape Ecology"},
+		  {id: 8,
+		   text: "Population Dynamics"},
+		  {id: 9,
+		   text: "Biogeography"},
+		  {id: 10,
+		   text: "Nutrient Cycling"},
+		  {id: 10,
+		   text: "and Productivity"},
+		  {id: 11,
+		   text: "Foodweb Ecology"},
+		  {id: 12,
+		   text: "Paleoecology"},
+		  {id: 13,
+		   text: "Evolution"},
+		  {id: 14,
+		   text: "Forest Ecology"},
+		  {id: 15,
+		   text: "Disturbances and"},
+		  {id:15,
+		   text: "Invasive Species"},
+		  {id: 16,
+		   text: "Infectious Disease"}
+	];
 	
 	var configuration = {
 		scale: 1, //The higher the scale, the smaller the drawing. A scale of '2' would halve the size.
-		arcThickness: 70,
+		arcThickness: 50,
 		parentEl: "body",
 		inactiveArcColor: "#F0F0F0"
 	}

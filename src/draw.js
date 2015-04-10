@@ -14,8 +14,7 @@ jQuery(document).ready(function($) {
 	*/
 	d3.tsv("data/Top16Terms.tab", function(error, terms) {
 		$.getJSON("data/xy_top100.json", function(coords){
-			d3.tsv("data/table.tsv", function(err, table){
-				console.log(terms);
+			d3.tsv("data/filtered_table.txt", function(err, table){
 				
 				//Get the column names from the terms data
 				categoryID = Object.keys(terms[0])[0];
@@ -24,7 +23,8 @@ jQuery(document).ready(function($) {
 				var width  = 830,
 				    height = 830,
 				    scale = configuration.scale || 1,
-				    radius = Math.min(width, height) / 2.1;
+				    radius = Math.min(width, height) / 2,
+				    arcWidth = (Math.PI * 2 * radius)/terms.length;
 				
 				//Create the SVG element and center it in it's parent element
 				var svg = d3.select(configuration.parentEl || "body").append("svg")
@@ -36,7 +36,6 @@ jQuery(document).ready(function($) {
 				
 				drawArcs();
 				drawNodes();
-				
 				
 				/*
 				 * drawArcs creates the SVG and draws the donut shape with each of the categories as an equally-sized arc of the donut. 
@@ -56,57 +55,62 @@ jQuery(document).ready(function($) {
 					  var g = svg.selectAll(".arc")
 					      .data(pie(terms))
 					      .enter().append("g")
-					      .attr("class", "arc");
+					      .attr("class", "arcs");
 					
 					  //Draw the path for each arc
 					  g.append("path")
 					      .attr("d", arc)
+					      .attr("class", "arc")
 					      //Bind the categoryID to each arc so it is accessible via jQuery and d3
 					      .attr("data-category", function(d){ return d.data[categoryID]; })
-					      .attr("id", function(d){ return d.data[categoryID]; })
+					      .attr("id", function(d){ return "arc-" + d.data[categoryID]; })
 					      .style("fill", function(d) { 
 					    	  //Find the color for this arc by finding it in the category->color map
 					    	  return colors[d.data[categoryID]]; 
 					    	})
 					      //This will happen when a user clicks on an arc
 				          .on("click", function(d){ 
-			        		  //If this arc is already selected, de-select it
-				        	  if(d3.select(this).classed("selected")){
-				        		  svg.selectAll("path")
-				        		     .style("fill", function(path){
-				        		    	 return colors[path.data[categoryID]];
-				        		     });
-				        		  d3.select(this).classed("selected", false);
-				        		  
-				        		  //Reset the nodes
-				        		  resetNodes();
-				        	  }
-				        	  // If it's not selected yet, color the arc differently and then change the related nodes
-				        	  else{
-				        		  var category = d.data[categoryID];
-				        		  //Select all the other arcs and color them as inactive
-				        		  svg.selectAll("path").style("fill", (configuration.inactiveArcColor || "#F0F0F0"));
-				    	          //Then select the active arc and recolor it as its original color
-				        		  d3.select(this)
-				    	            .style("fill", colors[category])
-				    	            .classed("selected", true);  
-				    	          //Call our function that will manipulate the nodes for this category
-				        		  selectNodes(category);
-				        	  }
-				        	  // 
-					    	});
-					
-					  //Draw a label on each arc
-					  g.append("text")
-					   .attr("dx", "5")
-					   .attr("dy", "-10")
-					   .append("textPath")
-			   	       .text(function(d) { 
-			        	  var category = d.data[categoryID];
-			        	  
-					      return categories[category]; 
-					   })
-					   .attr("xlink:href", function(d){ return "#" + d.data[categoryID]; });
+				        	  selectCategory(this, d.data.categoryID);
+					      });
+					  
+					  var labels = svg.selectAll(".arc-label")
+								      .data(categoryLabels)
+								      .enter().append("g");
+					  	
+				    var idsAdded = new Array();
+					labels.append("text")
+						  .attr("class", "arc-label category-label")
+						  .attr("dy", function(d){
+							  var i = 0,
+							  	  count = 0;
+							  while(i > -1){
+								  i = idsAdded.indexOf(d.id, i+count);
+								  if(i > -1) count++;
+							  }
+							  idsAdded.push(d.id);
+							  return 20 + (20*count);
+						  })
+						  .attr("dx", function(d){
+							  //Determine the horizontal offset by finding the leftover space in the arc width and divinding by two, essentially "centering" the text
+							  //Create a DOM element with the label text inside in order to get a pixel width
+							  var span = $(document.createElement("span")).text(d.text).addClass("arc-label");
+							  $("body").append(span);
+							  var textWidth = $(span).width();
+							  $(span).detach(); //remove it, it was only temporary
+							  
+							  var xOffset = (arcWidth - textWidth)/2;
+							  if(xOffset < 0) return 0;
+							  else return xOffset;
+						  })
+						  .on("click", function(d){
+							//Get the arc path that corresponds to this label
+							selectCategory(document.getElementById("arc-" + d.id), d.id);
+						  })
+						  .append("textPath")
+				   	      .text(function(d) { 
+				   	         return d.text;
+						  })
+						  .attr("xlink:href", function(d){ return "#arc-" + d.id; });
 				}
 
 				function drawNodes(){			
@@ -167,15 +171,15 @@ jQuery(document).ready(function($) {
 					var force = d3.layout.force()
 								   .nodes(nodes)
 								   .size([width, height])
-								   .gravity(.70)
+								   .gravity(.60)
 								 //.charge(50)
 								 //.chargeDistance(10)
 								 //.theta(.01)
 								   .on("tick", tick)
 								   .start();
-				
+
+					//Start the timeout so the animation doesn't last forever
 					var timeout = window.setTimeout(start, 10000);
-					console.log("start timeout");
 					
 					var nodeGroup = svg.append("g")
 					                   .attr("class", "node-group")
@@ -279,7 +283,7 @@ jQuery(document).ready(function($) {
 				  .style("opacity", function(d){
 					  var key = $(this).attr("data-key");
 					  var row = $.grep(table, function(e){ return e.primaryKey == key; });
-					  var categoryName = "lda020selected_topicWeights_ " + category;
+					  var categoryName = "lda020selected_topicWeights_" + category;
 					  return row[0][categoryName];
 				  });
 				
@@ -301,6 +305,47 @@ jQuery(document).ready(function($) {
 			function resetNodes(){
 				d3.selectAll(".node")
 				  .style("opacity", "1");
+			}
+			
+			/*
+			 * Select the specified category and "filter" the nodes related to that category
+			 */
+			function selectCategory(element, category){
+				  //If this arc is already selected...
+	        	  if(d3.select(element).classed("selected")){
+	        		 
+	        		  //Change all the other arc colors back to normal
+	        		  $("path.arc").css("fill", function(){
+	        			  return colors[$(this).attr("data-category")];
+	        		  });
+	        		  
+	        		  //Make the new list of classes and add them
+	        		  var newClasses = $(element).attr("class").replace("selected", "");
+	        		  $(element).attr("class", newClasses);
+	        		  
+	        		  //Reset the nodes
+	        		  resetNodes();
+	        	  }
+	        	  // If this is a new selection...
+	        	  else{
+	        		  //Select all the other arcs and color them as inactive
+	        		  $("path.arc").css("fill", (configuration.inactiveArcColor || "#F0F0F0"));
+	        		  
+	        		  //Select any other arc that is marked as "selected" and remove that class
+	        		  $("path.arc.selected").each(function(i, arc){
+	        			  var newClasses = $(arc).attr("class").replace("selected", "");
+		    	          $(arc).attr("class", newClasses);
+	        		  });
+	        		  
+	        		  //Then select the active arc and recolor it as its original color
+	        		  var currentClasses = $(element).attr("class");
+	        		  $(element)
+	    	            .css("fill", colors[category])
+	    	            .attr("class", currentClasses + " selected");
+	        		  
+	    	          //Call our function that will manipulate the nodes for this category
+	        		  selectNodes(category);
+	        	  }
 			}
 	
 			});

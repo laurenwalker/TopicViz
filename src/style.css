@@ -1,11 +1,15 @@
 	body{
-		background-color: #000;
+		background-color: #1E1E1E;
 	}
 	.arc path {
 	  stroke: #FFF;
+	  stroke-width: 0px;
+	  cursor: pointer;
 	}
-	.arc text{
+	.arc-label{
 		fill: #FFF;
 		font-size: 15px;
 		font-family: sans-serif;
+		cursor: pointer;
 	}
+	
