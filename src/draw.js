@@ -35,7 +35,7 @@ jQuery(document).ready(function($) {
 				    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 				
 				drawArcs();
-				drawNodes();
+				//drawNodes();
 				
 				/*
 				 * drawArcs creates the SVG and draws the donut shape with each of the categories as an equally-sized arc of the donut. 
@@ -66,7 +66,7 @@ jQuery(document).ready(function($) {
 					      .attr("id", function(d){ return "arc-" + d.data[categoryID]; })
 					      .style("fill", function(d) { 
 					    	  //Find the color for this arc by finding it in the category->color map
-					    	  return colors[d.data[categoryID]]; 
+					    	  return colors[d.data[categoryID]][0]; 
 					    	})
 					      //This will happen when a user clicks on an arc
 				          .on("click", function(d){ 
@@ -80,6 +80,9 @@ jQuery(document).ready(function($) {
 				    var idsAdded = new Array();
 					labels.append("text")
 						  .attr("class", "arc-label category-label")
+						  .style("fill", function(d){
+							  return colors[d.id][1];
+						  })
 						  .attr("dy", function(d){
 							  var i = 0,
 							  	  count = 0;
@@ -101,6 +104,9 @@ jQuery(document).ready(function($) {
 							  var xOffset = (arcWidth - textWidth)/2;
 							  if(xOffset < 0) return 0;
 							  else return xOffset;
+						  })
+						  .attr("data-category", function(d){
+							  return d.id;
 						  })
 						  .on("click", function(d){
 							//Get the arc path that corresponds to this label
@@ -195,7 +201,7 @@ jQuery(document).ready(function($) {
 				  	              .attr("data-key", function(d){
 				  	            	  return d.key;
 				  	              })
-				  	              .style("fill", function(d) { return colors[d.color]; })
+				  	              .style("fill", function(d) { return colors[d.color][0]; })
 							   /* .attr("transform",  function(d){
 							    	console.log("plotting");
 							    	var value = "translate(";
@@ -316,7 +322,12 @@ jQuery(document).ready(function($) {
 	        		 
 	        		  //Change all the other arc colors back to normal
 	        		  $("path.arc").css("fill", function(){
-	        			  return colors[$(this).attr("data-category")];
+	        			  return colors[$(this).attr("data-category")][0];
+	        		  });
+	        		  
+	        		  //Change all the other arc labels back to normal
+	        		  $(".arc-label").css("fill", function(){
+	        			 return colors[$(this).attr("data-category")][1]; 
 	        		  });
 	        		  
 	        		  //Make the new list of classes and add them
@@ -330,6 +341,7 @@ jQuery(document).ready(function($) {
 	        	  else{
 	        		  //Select all the other arcs and color them as inactive
 	        		  $("path.arc").css("fill", (configuration.inactiveArcColor || "#F0F0F0"));
+	        		  $(".arc-label").css("fill", (configuration.inactiveLabelColor || "#999999"));
 	        		  
 	        		  //Select any other arc that is marked as "selected" and remove that class
 	        		  $("path.arc.selected").each(function(i, arc){
@@ -340,8 +352,12 @@ jQuery(document).ready(function($) {
 	        		  //Then select the active arc and recolor it as its original color
 	        		  var currentClasses = $(element).attr("class");
 	        		  $(element)
-	    	            .css("fill", colors[category])
+	    	            .css("fill", colors[category][0])
 	    	            .attr("class", currentClasses + " selected");
+	        		  
+	        		  //Find the arc label that goes with this arc and recolor it
+	        		  $("[data-category='" + category + "'].arc-label")
+	        		       .css("fill", colors[category][1]);
 	        		  
 	    	          //Call our function that will manipulate the nodes for this category
 	        		  selectNodes(category);

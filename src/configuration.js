@@ -2,23 +2,24 @@
 	 *  ======== CONFIGURATION =======
 	 */
 	// Set up the category colors 
+	//The first color is the arc background color. The second color is the label text color.
 	var colors = {
-			1: "#a6cee3",
-			2: "#1f78b4",
-			3: "#b2df8a",
-			4: "#33a02c",
-			5: "#fb9a99",
-			6: "#e31a1c",
-			7: "#fdbf6f",
-			8: "#ff7f00",
-			9: "#cab2d6",
-			10: "#6a3d9a",
-			11: "#ffff99",
-			12: "#b15928",
-			13: "#66AA99",
-			14: "#BB9999",
-			15: "#EE5555",
-			16: "#9977BB"
+			1: ["#a6cee3", "rgb(0, 50, 90)"],
+			2: ["#1f78b4", "rgb(217, 244, 255)"],
+			3: ["#b2df8a", "rgb(3, 85, 0)"],
+			4: ["#33a02c", "rgb(4, 63, 0)"],
+			5: ["#fb9a99", "rgb(104, 6, 6)"],
+			6: ["#e31a1c", "rgb(255, 204, 198)"],
+			7: ["#fdbf6f", "rgb(66, 42, 0)"],
+			8: ["#ff7f00", "rgb(255, 245, 216)"],
+			9: ["#cab2d6", "rgb(22, 0, 20)"],
+			10: ["#6a3d9a", "rgb(243, 229, 255)"],
+			11: ["#ffff99", "#717174"],
+			12: ["#b15928", "rgb(70, 50, 0)"],
+			13: ["#66AA99", "rgb(0, 59, 14)"],
+			14: ["#BB9999", "rgb(33, 29, 33)"],
+			15: ["#EE5555", "rgb(84, 0, 0)"],
+			16: ["#9977BB", "rgb(42, 0, 78)"]
 	}
 	
 	// Create unique names for each category that summarize the list of terms
@@ -48,8 +49,10 @@
 		  {id: 7,
 		   text: "Landscape Ecology"},
 		  {id: 8,
-		   text: "Population Dynamics"},
-		  {id: 9,
+		   text: "Population"},
+		  {id: 8,
+		   text: "Dynamics"},
+		   {id: 9,
 		   text: "Biogeography"},
 		  {id: 10,
 		   text: "Nutrient Cycling"},
@@ -75,5 +78,6 @@
 		scale: 1, //The higher the scale, the smaller the drawing. A scale of '2' would halve the size.
 		arcThickness: 50,
 		parentEl: "body",
-		inactiveArcColor: "#F0F0F0"
+		inactiveArcColor: "#F0F0F0",
+		inactiveLabelColor: "#999999"
 	}
