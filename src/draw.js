@@ -35,7 +35,7 @@ jQuery(document).ready(function($) {
 				    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 				
 				drawArcs();
-				//drawNodes();
+				drawNodes();
 				
 				/*
 				 * drawArcs creates the SVG and draws the donut shape with each of the categories as an equally-sized arc of the donut. 
