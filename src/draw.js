@@ -28,6 +28,7 @@ jQuery(document).ready(function($) {
 				
 				//Create the SVG element and center it in it's parent element
 				var svg = d3.select(configuration.parentEl || "body").append("svg")
+					.attr("xmlns", "http://www.w3.org/2000/svg")
 				    .attr("width",  width)
 				    .attr("height", height)
 				    .attr("viewBox", "0,0," + width + "," + height*scale)
@@ -49,7 +50,8 @@ jQuery(document).ready(function($) {
 					
 					//Create a d3 pie layout
 					var pie = d3.layout.pie()
-					    .value(function(d) { return 1; });
+					    .value(function(d) { return 1; })
+					    .sort(null);
 						
 					  //Draw a group element to group our arcs
 					  var g = svg.selectAll(".arc")
@@ -133,6 +135,7 @@ jQuery(document).ready(function($) {
 						var node = $.grep(table, function(e){ return e.primaryKey == key; });
 						var category100 = node[0].maxtopic100selected_id;
 						var category20 = node[0].maxtopic20selected_id;
+						var isProduct = (node[0].product_oid.length > 0)? true : false;
 						
 						var d = {
 							x: coords[key][0],
@@ -143,7 +146,9 @@ jQuery(document).ready(function($) {
 							cluster: category100,
 							category: category20,
 							color: category20,
-							radius: 4
+							radius: 4,
+							isProduct: isProduct,
+							shape: 'rect'
 						};
 						if (!clusters[i] || (r > clusters[i].radius)) clusters[i] = d;
 						nodes.push(d);
@@ -153,7 +158,8 @@ jQuery(document).ready(function($) {
 					//var margin = {left: 100, right: 100, top: 100, bottom: 100},
 					var	padding = 2, // separation between same-color nodes
 				    	clusterPadding = 4, // separation between different-color nodes
-				    	maxRadius = 4;
+				    	maxRadius = 4,
+				    	rectLength = maxRadius*1.5;
 					
 					//Find the min and max values 
 					var xMin = d3.min(keys, function(d){ return coords[d][0]; }),
@@ -191,36 +197,37 @@ jQuery(document).ready(function($) {
 					                   .attr("class", "node-group")
 					                   .attr("transform", "translate(" + width/-2 + "," + height/-2 + ")");
 					
-					var node = nodeGroup.selectAll("circle")
+					var shapes = nodeGroup.selectAll("circle")
 				    			  .data(nodes)
-				                  .enter().append("circle")
-				  	              .attr("class", "node")
-				  	              .attr("data-category", function(d){
-				  	            	  return d.category;
-				  	              })
-				  	              .attr("data-key", function(d){
-				  	            	  return d.key;
-				  	              })
-				  	              .style("fill", function(d) { return colors[d.color][0]; })
-							   /* .attr("transform",  function(d){
-							    	console.log("plotting");
-							    	var value = "translate(";
-							    	value += xScale(d.x);
-							    	value += ",";
-							    	value += yScale(d.y);
-							    	value += ")";
-							    	return value;
-							    }); */
-							    //.call(force.drag);
+				    			  .enter();
 					
+					var circles = shapes.append("circle").filter(function(d){ return !d.isProduct }).attr("class", "node");
+					var squares = shapes.append("rect")
+										.filter(function(d){ return d.isProduct })
+										.attr("class", "node")
+										.attr("width", rectLength)
+										.attr("height", rectLength);
+						 
+					var allNodes = d3.selectAll(".node")
+							  	              .attr("data-category", function(d){ return d.category; })
+							  	              .attr("data-key", function(d){ return d.key; })
+							  	              .attr("title", "test")
+							  	              .attr("data-container", "body")
+							  	              .attr("data-trigger", "hover")
+							  	              .style("fill", function(d) { return colors[d.color][0]; });
+										
 					function start(){
 						force.stop();
 						window.clearTimeout(timeout);
+						
+						$("svg .node").on("mouseover", function(){
+							console.log("mouseover");
+						});
 					}
 			
 					//force.start();
 					
-					node.transition()
+					allNodes.transition()
 					    .duration(5)
 					    .delay(function(d, i) { return i * 2; })
 					    .attrTween("r", function(d) {
@@ -229,10 +236,15 @@ jQuery(document).ready(function($) {
 					    });
 				
 					function tick(e) {
-					  node.each(cluster(10 * e.alpha * e.alpha))
-					      .each(collide(.5))
-					      .attr("cx", function(d) { return d.x; })
-					      .attr("cy", function(d) { return d.y; });
+						allNodes.each(cluster(10 * e.alpha * e.alpha))
+					      .each(collide(.5));
+						
+						//Give the coordinates to the two different shapes
+					    circles.attr("cx", function(d) { return d.x; })
+					      	   .attr("cy", function(d) { return d.y; });
+					    //Remember that for rects, the x,y coordinates will be the top-left corner
+					    squares.attr("x", function(d) { return d.x - (rectLength/2); })
+				      	       .attr("y", function(d) { return d.y - (rectLength/2); });
 					}
 				
 					// Move d to be adjacent to the cluster node.
