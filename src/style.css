@@ -7,8 +7,13 @@
 	  cursor: pointer;
 	}
 	.arc-label{
-		font-size: 17px;
-		font-family: sans-serif;
+		font-size: 16px;
+		font-weight: bold;
+		font-family: Helvetica, Arial, sans-serif;
 		cursor: pointer;
+		fill: #222;
+	}
+	.arc-label.inactive{
+		fill: #999;
 	}
 	

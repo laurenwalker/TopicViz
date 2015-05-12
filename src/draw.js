@@ -10,7 +10,7 @@ jQuery(document).ready(function($) {
 	*	- Top16Terms.tab: The definition of our top 20 categories - A list of the category ID and it's associated terms
 	*	- xy_top100.json: The starting x,y position for each node, in JSON. The format is:
 	*		- { nodeKey: [x, y] }
-	*	- table.tsv: The full table with all information about each node. Will get pulled in as an array of nodes objects. 
+	*	- filtered_table: The full table with (almost) all information about each node. Will get pulled in as an array of nodes objects. 
 	*/
 	d3.tsv("data/Top16Terms.tab", function(error, terms) {
 		$.getJSON("data/xy_top100.json", function(coords){
@@ -68,7 +68,7 @@ jQuery(document).ready(function($) {
 					      .attr("id", function(d){ return "arc-" + d.data[categoryID]; })
 					      .style("fill", function(d) { 
 					    	  //Find the color for this arc by finding it in the category->color map
-					    	  return colors[d.data[categoryID]][0]; 
+					    	  return colors[d.data[categoryID]]; 
 					    	})
 					      //This will happen when a user clicks on an arc
 				          .on("click", function(d){ 
@@ -82,9 +82,6 @@ jQuery(document).ready(function($) {
 				    var idsAdded = new Array();
 					labels.append("text")
 						  .attr("class", "arc-label category-label")
-						  .style("fill", function(d){
-							  return colors[d.id][1];
-						  })
 						  .attr("dy", function(d){
 							  var i = 0,
 							  	  count = 0;
@@ -209,12 +206,16 @@ jQuery(document).ready(function($) {
 										.attr("height", rectLength);
 						 
 					var allNodes = d3.selectAll(".node")
-							  	              .attr("data-category", function(d){ return d.category; })
-							  	              .attr("data-key", function(d){ return d.key; })
+							  	              .attr("data-category", function(d){
+							  	            	  return d.category;
+							  	              })
+							  	              .attr("data-key", function(d){
+							  	            	  return d.key;
+							  	              })
 							  	              .attr("title", "test")
 							  	              .attr("data-container", "body")
 							  	              .attr("data-trigger", "hover")
-							  	              .style("fill", function(d) { return colors[d.color][0]; });
+							  	              .style("fill", function(d) { return colors[d.color]; });
 										
 					function start(){
 						force.stop();
@@ -239,10 +240,8 @@ jQuery(document).ready(function($) {
 						allNodes.each(cluster(10 * e.alpha * e.alpha))
 					      .each(collide(.5));
 						
-						//Give the coordinates to the two different shapes
 					    circles.attr("cx", function(d) { return d.x; })
 					      	   .attr("cy", function(d) { return d.y; });
-					    //Remember that for rects, the x,y coordinates will be the top-left corner
 					    squares.attr("x", function(d) { return d.x - (rectLength/2); })
 				      	       .attr("y", function(d) { return d.y - (rectLength/2); });
 					}
@@ -334,13 +333,10 @@ jQuery(document).ready(function($) {
 	        		 
 	        		  //Change all the other arc colors back to normal
 	        		  $("path.arc").css("fill", function(){
-	        			  return colors[$(this).attr("data-category")][0];
+	        			  return colors[$(this).attr("data-category")];
 	        		  });
 	        		  
-	        		  //Change all the other arc labels back to normal
-	        		  $(".arc-label").css("fill", function(){
-	        			 return colors[$(this).attr("data-category")][1]; 
-	        		  });
+	        		  $(".arc-label").removeClass("inactive");
 	        		  
 	        		  //Make the new list of classes and add them
 	        		  var newClasses = $(element).attr("class").replace("selected", "");
@@ -353,7 +349,7 @@ jQuery(document).ready(function($) {
 	        	  else{
 	        		  //Select all the other arcs and color them as inactive
 	        		  $("path.arc").css("fill", (configuration.inactiveArcColor || "#F0F0F0"));
-	        		  $(".arc-label").css("fill", (configuration.inactiveLabelColor || "#999999"));
+	        		  $(".arc-label").addClass("inactive");
 	        		  
 	        		  //Select any other arc that is marked as "selected" and remove that class
 	        		  $("path.arc.selected").each(function(i, arc){
@@ -364,12 +360,8 @@ jQuery(document).ready(function($) {
 	        		  //Then select the active arc and recolor it as its original color
 	        		  var currentClasses = $(element).attr("class");
 	        		  $(element)
-	    	            .css("fill", colors[category][0])
+	    	            .css("fill", colors[category])
 	    	            .attr("class", currentClasses + " selected");
-	        		  
-	        		  //Find the arc label that goes with this arc and recolor it
-	        		  $("[data-category='" + category + "'].arc-label")
-	        		       .css("fill", colors[category][1]);
 	        		  
 	    	          //Call our function that will manipulate the nodes for this category
 	        		  selectNodes(category);
