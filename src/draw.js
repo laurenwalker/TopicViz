@@ -17,7 +17,7 @@ jQuery(document).ready(function($) {
 			d3.tsv("data/filtered_table.txt", function(err, table){
 				
 				//Get the column names from the terms data
-				categoryID = Object.keys(terms[0])[0];
+				var categoryID = Object.keys(terms[0])[0];
 				
 				//Set up some basic configuration for the SVG
 				var width  = 830,
@@ -37,6 +37,9 @@ jQuery(document).ready(function($) {
 				
 				drawArcs();
 				drawNodes();
+				
+				
+				//================ FUNCTIONS =======================
 				
 				/*
 				 * drawArcs creates the SVG and draws the donut shape with each of the categories as an equally-sized arc of the donut. 
@@ -206,16 +209,73 @@ jQuery(document).ready(function($) {
 										.attr("height", rectLength);
 						 
 					var allNodes = d3.selectAll(".node")
-							  	              .attr("data-category", function(d){
-							  	            	  return d.category;
-							  	              })
-							  	              .attr("data-key", function(d){
-							  	            	  return d.key;
-							  	              })
-							  	              .attr("title", "test")
-							  	              .attr("data-container", "body")
-							  	              .attr("data-trigger", "hover")
-							  	              .style("fill", function(d) { return colors[d.color]; });
+					  	              .attr("data-category", function(d){
+					  	            	  return d.category;
+					  	              })
+					  	              .attr("data-key", function(d){
+					  	            	  return d.key;
+					  	              })
+					  	              .attr("title", "test")
+					  	              .attr("data-container", "body")
+					  	              .attr("data-trigger", "hover")
+					  	              .style("fill", function(d) { return colors[d.color]; })
+					  	              .on("click", function(d){
+	  				  	            	  //Get the row from the table 
+					  	            	  var row = $.grep(table, function(e){ return e.primaryKey == d.key; });					  	            	  
+					  	            	  if(!row) return;
+					  	            	  else row = row[0];
+					  	            	  
+					  	            	  console.log(row);
+					  	            	  
+					  	            	  //Get the info from the table for products and projects
+					  	            	  if(d.isProduct){
+					  	            		  var pretitle = $(document.createElement("span")).addClass("pretitle").text(row.Title_for_TM),
+					  	            		      title    = subtitle + row.TI,
+				  	            		      	  people   = row.AU,
+				  	            		      	  summary  = row.summary_for_TM,
+				  	            		      	  year     = row.PY;					  	            		  
+					  	            	  }
+					  	            	  else{
+					  	            		  var pretitle = $(document.createElement("span")).addClass("pretitle").text("Project"),
+					  	            		  	  title    = row.Title_for_TM,
+					  	            		      people   = row.Project_Pis,
+					  	            		      summary  = row.summary_for_TM;
+					  	            		  
+					  	            		  if(row.first_actv_start_date_year == row.last_actv_end_date_year)
+					  	            			  var years = row.last_actv_end_date_year;
+					  	            		  else
+					  	            			  var years = row.first_actv_start_date_year + " to " + row.last_actv_end_date_year;
+						  	             }
+					  	            	  
+					  	            	  //Get the formatted list of people
+				  	            		  var names = people.split(";"),
+				  	            		      formattedNames = "";
+				  	            		  
+				  	            		  //Filter out all the spaces
+				  	            		  names = names.filter(function(n){ return(n != " "); });
+				  	            		  
+				  	            		  for(var i=0; i<names.length; i++){
+				  	            			  if(names[i] == " ") continue;
+				  	            			  
+				  	            			  var name = names[i].split(",");
+				  	            			  
+				  	            			  if(name.length == 2)
+				  	            				formattedNames += name[1] + " " + name[0];
+				  	            			  else
+				  	            			    formattedNames += name[0];
+				  	            			  
+				  	            			  if((names.length > 2) && (i < names.length-1))
+				  	            				formattedNames += ", ";
+				  	            			  else if(names.length == 2)
+				  	            				formattedNames += " and ";
+				  	            		  }
+					  	            	 
+					  	            	 //Insert the node info into the page
+					  	            	 $("#node-info .node-title").text(title).prepend(pretitle);
+					  	            	 $("#node-info .node-people").text(formattedNames);
+					  	            	 $("#node-info .node-years").text(years);
+					  	            	 $("#node-info .node-summary").text(summary);
+					  	              });
 										
 					function start(){
 						force.stop();
@@ -296,7 +356,8 @@ jQuery(document).ready(function($) {
 				
 			function selectNodes(category){
 				d3.selectAll(".node")
-				 // .attr("r", 2);
+				  .transition()
+				  .duration(800)
 				  .style("opacity", function(d){
 					  var key = $(this).attr("data-key");
 					  var row = $.grep(table, function(e){ return e.primaryKey == key; });
@@ -321,7 +382,9 @@ jQuery(document).ready(function($) {
 			
 			function resetNodes(){
 				d3.selectAll(".node")
-				  .style("opacity", "1");
+				  .transition()
+				  .duration(800)
+				  .style("opacity", .8);
 			}
 			
 			/*

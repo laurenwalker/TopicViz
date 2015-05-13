@@ -1,19 +1,42 @@
-	body{
-		background-color: #1E1E1E;
-	}
-	.arc path {
-	  stroke: #FFF;
-	  stroke-width: 0px;
-	  cursor: pointer;
-	}
-	.arc-label{
-		font-size: 16px;
-		font-weight: bold;
-		font-family: Helvetica, Arial, sans-serif;
-		cursor: pointer;
-		fill: #222;
-	}
-	.arc-label.inactive{
-		fill: #999;
-	}
-	
+body{
+	background-color: #1E1E1E;
+}
+#svg-container{
+	width: auto;
+	float: left;
+	margin-right: 20px;
+}
+#node-info{
+	float: left;
+	width: calc(100% - 850px);
+	color: white;
+	background-color: rgba(255,255,255,0.1);
+    border-radius: 5px;
+    padding: 10px;
+    margin-top: 20px;
+    height: 800px;
+    overflow-y: scroll;
+}
+#node-info .node-title > .pretitle{
+  color: #CCC;
+  font-weight: lighter;
+  text-transform: uppercase;
+  font-size: .6em;
+  clear: right;
+  display: block;	
+}
+.arc path {
+  stroke: #FFF;
+  stroke-width: 0px;
+  cursor: pointer;
+}
+.arc-label{
+	font-size: 16px;
+	font-weight: bold;
+	font-family: Helvetica, Arial, sans-serif;
+	cursor: pointer;
+	fill: #222;
+}
+.arc-label.inactive{
+	fill: #999;
+}
