@@ -31,9 +31,11 @@ jQuery(document).ready(function($) {
 					.attr("xmlns", "http://www.w3.org/2000/svg")
 				    .attr("width",  width)
 				    .attr("height", height)
-				    .attr("viewBox", "0,0," + width + "," + height*scale)
-				    .append("g")
-				    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+				    .attr("viewBox", "0,0," + width + "," + height*scale);
+				
+				//write intro text
+      		     var intro = document.getElementById("introtext").innerHTML;
+        		 $("#sidetext").html(intro);
 				
 				drawArcs();
 				drawNodes();
@@ -76,7 +78,8 @@ jQuery(document).ready(function($) {
 					      //This will happen when a user clicks on an arc
 				          .on("click", function(d){ 
 				        	  selectCategory(this, d.data.categoryID);
-					      });
+					      })
+					      .attr("transform", "translate(" + width/2 + ", " + height/2 + ")");
 					  
 					  var labels = svg.selectAll(".arc-label")
 								      .data(categoryLabels)
@@ -125,6 +128,8 @@ jQuery(document).ready(function($) {
 						
 					//Access the data with the object keys (unique ids)
 					var keys = Object.keys(coords);
+					
+					var tooltipVisible = false;
 					
 					var nodes = [];
 					// The largest node for each cluster.
@@ -194,8 +199,7 @@ jQuery(document).ready(function($) {
 					var timeout = window.setTimeout(start, 10000);
 					
 					var nodeGroup = svg.append("g")
-					                   .attr("class", "node-group")
-					                   .attr("transform", "translate(" + width/-2 + "," + height/-2 + ")");
+					                   .attr("class", "node-group");
 					
 					var shapes = nodeGroup.selectAll("circle")
 				    			  .data(nodes)
@@ -215,31 +219,34 @@ jQuery(document).ready(function($) {
 					  	              .attr("data-key", function(d){
 					  	            	  return d.key;
 					  	              })
-					  	              .attr("title", "test")
-					  	              .attr("data-container", "body")
-					  	              .attr("data-trigger", "hover")
 					  	              .style("fill", function(d) { return colors[d.color]; })
+					  	              .style("stroke", function(d) { return colors[d.color]; })
 					  	              .on("click", function(d){
 	  				  	            	  //Get the row from the table 
 					  	            	  var row = $.grep(table, function(e){ return e.primaryKey == d.key; });					  	            	  
 					  	            	  if(!row) return;
 					  	            	  else row = row[0];
 					  	            	  
-					  	            	  console.log(row);
-					  	            	  
+				  	            		  var pretitle = $(document.createElement("span")).addClass("pretitle");
+					  	            	  					  	            	  
 					  	            	  //Get the info from the table for products and projects
 					  	            	  if(d.isProduct){
-					  	            		  var pretitle = $(document.createElement("span")).addClass("pretitle").text(row.Title_for_TM),
-					  	            		      title    = subtitle + row.TI,
+					  	            		  var titlePretitle = $(pretitle).clone().text(row.DT),
+					  	            		      title    = row.TI,
+					  	            		      peoplePretitle = $(pretitle).clone().text("Authors"),
 				  	            		      	  people   = row.AU,
-				  	            		      	  summary  = row.summary_for_TM,
-				  	            		      	  year     = row.PY;					  	            		  
+				  	            		      	  journal  = row.SO_clean.toLowerCase(),
+				  	            		      	  summary  = $(document.createElement("span")).addClass("journal").text(journal),
+				  	            		      	  years    = row.PY + ". ",
+				  	            		      	  type     = "product";					  	            		  
 					  	            	  }
 					  	            	  else{
-					  	            		  var pretitle = $(document.createElement("span")).addClass("pretitle").text("Project"),
+				  	            		  	  var titlePretitle = $(pretitle).clone().text("Project"),
 					  	            		  	  title    = row.Title_for_TM,
+					  	            		  	  peoplePretitle = $(pretitle).clone().text("Project PIs"),
 					  	            		      people   = row.Project_Pis,
-					  	            		      summary  = row.summary_for_TM;
+					  	            		      summary  = $(document.createElement("p")).text(row.summary_for_TM),
+					  	            		      type     = "project";
 					  	            		  
 					  	            		  if(row.first_actv_start_date_year == row.last_actv_end_date_year)
 					  	            			  var years = row.last_actv_end_date_year;
@@ -271,19 +278,97 @@ jQuery(document).ready(function($) {
 				  	            		  }
 					  	            	 
 					  	            	 //Insert the node info into the page
-					  	            	 $("#node-info .node-title").text(title).prepend(pretitle);
-					  	            	 $("#node-info .node-people").text(formattedNames);
-					  	            	 $("#node-info .node-years").text(years);
-					  	            	 $("#node-info .node-summary").text(summary);
+					  	            	 $("#node-info .node-title").text(title).prepend(titlePretitle);
+					  	            	 $("#node-info .node-title").css("color", colors[d.category]);
+					  	            	 $("#node-info .node-people").text(formattedNames).prepend(peoplePretitle);
+					  	            	 $("#node-info .node-years").text(years).addClass(type);
+					  	            	 $("#node-info .node-summary").html(summary).addClass(type);
+					  	            	 
+					  	            	 $("#sidetext").html(document.getElementById("node-info").innerHTML);	
 					  	              });
+					
+					//Insert an element to hold the title info on hover
+					var tooltip = svg.append("g")
+								     .attr("id", "node-tooltip");
+					
+           		    var tooltipRect = tooltip.append("rect")
+							   			     .attr("width", 270)
+									         .attr("height", 100);
+                   		  
+					var tooltipText = tooltip.append("text")
+											 .attr("dx", 0)
+											 .attr("dy", 0)
+											 .attr("x", 10)
+											 .attr("y", 20)
+											 .attr("text-anchor", "start");
+					
+					function wrap(text, width) {
+						  text.each(function() {
+						    var text = d3.select(this),
+						        words = text.text().split(/\s+/).reverse(),
+						        word,
+						        line = [],
+						        lineNumber = 0,
+						        lineHeight = 1.1, // ems
+						        x = text.attr("x"),
+						        y = text.attr("y"),
+						        dy = parseFloat(text.attr("dy")),
+						        tspan = text.text(null).append("tspan").attr("x", x).attr("y", y).attr("dx", 10).attr("dy",++lineNumber * lineHeight + dy + "em");
+						    while (word = words.pop()) {
+						      line.push(word);
+						      tspan.text(line.join(" "));
+						      if (tspan.node().getComputedTextLength() > width) {
+						        line.pop();
+						        tspan.text(line.join(" "));
+						        line = [word];
+						        tspan = text.append("tspan").attr("x", x).attr("y", y).attr("dx", 10).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+						      }
+						    }
+						  });
+						}
+					
+					allNodes.on("mouseover", function(d){
+						 if(!tooltipVisible) $("#node-tooltip").css("display", "block");
+							
+	  	            	 //Get the row from the table 
+	  	            	  var row = $.grep(table, function(e){ return e.primaryKey == d.key; });					  	            	  
+	  	            	  if(!row) return;
+	  	            	  else row = row[0];
+	  	            	  					  	            	  
+	  	            	  //Get the info from the table for products and projects
+	  	            	  if(d.isProduct){
+	  	            		  var pretitle = row.DT || "",
+	  	            		      title    = pretitle + ": " + row.TI;				  	            		  
+	  	            	  }
+	  	            	  else
+	  	            		  var title    = "Project: " + row.Title_for_TM;
+	  	            	  
+	  	            	 //Insert the title into a hover element
+		  	            tooltipText.text(title).call(wrap, 250);
+		  	            tooltipRect.attr("width", 270).attr("height", parseInt(tooltipText.style("height")) + 20);
+		  	            if(this.tagName == "rect"){
+			  	            var x = parseInt(d3.select(this).attr("x")) + 20,
+			  	                y = parseInt(d3.select(this).attr("y")) + 20;
+		  	            }
+		  	            else if(this.tagName =="circle"){
+				  	          var x = parseInt(d3.select(this).attr("cx")) + 24,
+			  	                  y = parseInt(d3.select(this).attr("cy")) + 24;
+		  	            }
+		  	           // tooltipText.attr("x", x);
+			  	       // tooltipText.attr("y", y);
+			  	        $("#node-tooltip tspan").attr("x", x);
+			  	        $("#node-tooltip tspan").attr("y", y);
+		  	            tooltipRect.attr("x", x);
+		  	            tooltipRect.attr("y", y);
+	  	              });
+					
+					allNodes.on("mouseout", function(d){
+						$("#node-tooltip").css("display", "none");
+					});
 										
 					function start(){
 						force.stop();
 						window.clearTimeout(timeout);
-						
-						$("svg .node").on("mouseover", function(){
-							console.log("mouseover");
-						});
 					}
 			
 					//force.start();
@@ -407,6 +492,9 @@ jQuery(document).ready(function($) {
 	        		  
 	        		  //Reset the nodes
 	        		  resetNodes();
+	        		  
+	        		  //change the text back to the original
+		        	  $("#sidetext").html(intro);
 	        	  }
 	        	  // If this is a new selection...
 	        	  else{
@@ -428,6 +516,10 @@ jQuery(document).ready(function($) {
 	        		  
 	    	          //Call our function that will manipulate the nodes for this category
 	        		  selectNodes(category);
+	        		  
+	        		  //Show the category in the side text
+		        	  var projectText = document.getElementById("cat-info-" + category);      	  
+		        	  $("#sidetext").html(projectText.innerHTML);
 	        	  }
 			}
 	

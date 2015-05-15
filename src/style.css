@@ -1,29 +1,12 @@
 body{
 	background-color: #1E1E1E;
 }
+
+/***************** SVG Drawing ******************/
 #svg-container{
 	width: auto;
 	float: left;
 	margin-right: 20px;
-}
-#node-info{
-	float: left;
-	width: calc(100% - 850px);
-	color: white;
-	background-color: rgba(255,255,255,0.1);
-    border-radius: 5px;
-    padding: 10px;
-    margin-top: 20px;
-    height: 800px;
-    overflow-y: scroll;
-}
-#node-info .node-title > .pretitle{
-  color: #CCC;
-  font-weight: lighter;
-  text-transform: uppercase;
-  font-size: .6em;
-  clear: right;
-  display: block;	
 }
 .arc path {
   stroke: #FFF;
@@ -40,3 +23,84 @@ body{
 .arc-label.inactive{
 	fill: #999;
 }
+.node:hover{
+	stroke-width: 8px;
+	cursor: pointer;
+}
+#node-tooltip{
+	display: none;
+}
+#node-tooltip > rect{
+	fill: rgba(0,0,0,0.8);
+}
+#node-tooltip > text{
+	fill: white;
+}
+
+/***************** Text ******************/
+#sidetext{
+	float: left;
+	width: calc(100% - 850px);
+	color: white;
+    border-radius: 5px;
+    padding: 10px;
+    margin-top: 20px;
+    height: 800px;
+    overflow-y: visible;
+}
+#sidetext > h1{
+	font-weight: lighter;
+}
+#sidetext h1.project{
+	font-weight: bold;
+}
+.replacement-text{
+	display: none;
+}
+.pretitle{
+  color: #CCC;
+  font-weight: lighter;
+  text-transform: uppercase;
+  font-size: .8em;
+  clear: right;
+  display: block;	
+}
+.node-people > .pretitle{
+	text-transform: none;
+}
+.node-summary .journal{
+	text-transform: capitalize;
+}
+.product.node-summary,
+.product.node-years{
+	display: inline;
+}
+p.smaller {
+	font-family:sans-serif;
+	color: white;
+	max-width: 600px;
+	min-width: 380px;
+	font-size: 13px;
+}
+h1.project {
+	font-size: 20px;
+}	
+a {
+	color: #00D1FF;
+}
+h1[data-category="1"]{ color:#a6cee3 ;}
+h1[data-category="2"]{color: #1f78b4;}
+h1[data-category="3"]{color: #b2df8a;}
+h1[data-category="4"]{color: #33a02c;}
+h1[data-category="5"]{color: #fb9a99;}
+h1[data-category="6"]{color: #e31a1c;}
+h1[data-category="7"]{color: #fdbf6f;}
+h1[data-category="8"]{color: #ff7f00;}
+h1[data-category="9"]{color: #cab2d6;}
+h1[data-category="10"]{color: #6a3d9a;}
+h1[data-category="11"]{color: #ffff99;}
+h1[data-category="12"]{color: #b15928;}
+h1[data-category="13"]{color: #66AA99;}
+h1[data-category="14"]{color: #BB9999;}
+h1[data-category="15"]{color: #EE5555;}
+h1[data-category="16"]{color: #9977BB;}
