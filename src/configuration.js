@@ -4,22 +4,22 @@
 	// Set up the category colors 
 	//The first color is the arc background color. The second color is the label text color.
 	var colors = {
-			1: "#a6cee3",
+			1: "#33a047",
 			2: "#1f78b4",
-			3: "#b2df8a",
-			4: "#33a02c",
-			5: "#fb9a99",
-			6: "#e31a1c",
-			7: "#fdbf6f",
-			8: "#ff7f00",
-			9: "#cab2d6",
-			10: "#6a3d9a",
-			11: "#ffff99",
-			12: "#b15928",
-			13: "#66AA99",
-			14: "#BB9999",
-			15: "#EE5555",
-			16: "#9977BB"
+			3: "#6a3e98",
+			4: "#e11e25",
+			5: "#f47e1f",
+			6: "#b15928",
+			7: "#fcbe6e",
+			8: "#f59899",
+			9: "#ed5655",
+			10: "#ba9898",
+			11: "#9977b5",
+			12: "#c9b2d6",
+			13: "#a6cde2",
+			14: "#faf39b",
+			15: "#b3d78a",
+			16: "#65a998"
 	}
 	
 	// Create unique names for each category that summarize the list of terms
