@@ -1,5 +1,14 @@
+@font-face{
+	font-family: "Lobster Two";
+	src: url("../assets/fonts/LobsterTwo-Regular.ttf") format("truetype");
+}
+
 body{
 	background-color: #1E1E1E;
+	font-family: Helvetica Neue, Arial, sans-serif;
+}
+a{
+	color: #97b749;
 }
 
 /***************** SVG Drawing ******************/
@@ -7,6 +16,7 @@ body{
 	width: auto;
 	float: left;
 	margin-right: 20px;
+	margin-top: 20px;
 }
 .arc path {
   stroke: #FFF;
@@ -16,7 +26,6 @@ body{
 .arc-label{
 	font-size: 16px;
 	font-weight: bold;
-	font-family: Helvetica, Arial, sans-serif;
 	cursor: pointer;
 	fill: #222;
 }
@@ -49,7 +58,10 @@ body{
     overflow-y: visible;
 }
 #sidetext > h1{
-	font-weight: lighter;
+  font-family: Lobster Two, Helvetica Neue, Helvetica, Arial, sans-serif;
+  margin-top: 5px;
+  color: #97b749;
+  font-size: 3em;
 }
 #sidetext h1.project{
 	font-weight: bold;
@@ -76,15 +88,45 @@ body{
 	display: inline;
 }
 p.smaller {
-	font-family:sans-serif;
-	color: white;
-	max-width: 600px;
-	min-width: 380px;
-	font-size: 13px;
+	color: #CCCCCC;
+	font-size: .8em;
+}
+p.small{
+	font-size: .9em;
+}
+.important > img{
+	float: left;
+	margin-right: 20px;
+	margin-bottom: 5px;
+	width: 90px;
+	height: auto;
+}
+h4.title{
+  margin-bottom: 5px;
+  font-size: 1.5em;
+  font-family: Lobster Two, Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-weight: 100;
 }
 h1.project {
 	font-size: 20px;
 }	
-a {
-	color: #00D1FF;
+
+/***************** Smaller Windows ******************/
+@media all and (max-width: 1150px){
+	#sidetext{
+		float: none;
+		width: 100%;
+		clear: both;
+		padding: 40px;
+		margin-top: 20px;
+	}
+	#sidetext h1{
+		text-align: center;
+	}
+	#svg-container{
+		float: none;
+		width: 850px;
+		margin-left: auto;
+		margin-right: auto;
+	}
 }
