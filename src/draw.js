@@ -235,10 +235,23 @@ jQuery(document).ready(function($) {
 					  	            		      title    = row.TI,
 					  	            		      peoplePretitle = $(pretitle).clone().text("Authors"),
 				  	            		      	  people   = row.AU,
-				  	            		      	  journal  = row.SO_clean.toLowerCase(),
-				  	            		      	  summary  = $(document.createElement("span")).addClass("journal").text(journal),
-				  	            		      	  years    = row.PY + ". ",
-				  	            		      	  type     = "product";					  	            		  
+				  	            		      	  journal  = $(document.createElement("span")).addClass("journal").text(row.SO_clean.toLowerCase()),
+				  	            		      	  year     = $(document.createElement("span")).addClass("years").text(row.PY + ". "),
+				  	            		      	  summary  = $(document.createElement("div")).append(year, journal),
+				  	            		      	  type     = "product",
+				  	            		      	  years    = "";					  	
+					  	            		  
+					  	            		  if(row.DI){
+					  	            			var shortType = row.DT.split(";", 1)[0].toLowerCase(),
+					  	            				icon      = $(document.createElement("i")).addClass("icon fa fa-external-link-square"),
+					  	            				link      = $(document.createElement("a")).addClass("more-link")
+						  	            													 .attr("href", "http://doi.org/" + row.DI)
+						  	            													 .attr("target", "_blank")
+						  	            													 .text("Go to this " + shortType)
+						  	            													 .append(icon);
+					  	            			$(summary).append($(document.createElement("div")).append(link));
+					  	            		  }
+					  	            		  
 					  	            	  }
 					  	            	  else{
 				  	            		  	  var titlePretitle = $(pretitle).clone().text("Project"),
@@ -248,7 +261,9 @@ jQuery(document).ready(function($) {
 					  	            		      summary  = $(document.createElement("p")).text(row.summary_for_TM),
 					  	            		      type     = "project";
 					  	            		  
-					  	            		  if(row.first_actv_start_date_year == row.last_actv_end_date_year)
+				  	            		  	  if(row.last_actv_end_date_year == "NaN")
+				  	            		  		  var years = row.first_actv_start_date_year;
+				  	            		  	  else if(row.first_actv_start_date_year == row.last_actv_end_date_year)
 					  	            			  var years = row.last_actv_end_date_year;
 					  	            		  else
 					  	            			  var years = row.first_actv_start_date_year + " to " + row.last_actv_end_date_year;
@@ -273,7 +288,7 @@ jQuery(document).ready(function($) {
 				  	            			  
 				  	            			  if((names.length > 2) && (i < names.length-1))
 				  	            				formattedNames += ", ";
-				  	            			  else if(names.length == 2)
+				  	            			  else if((names.length == 2) && (i != names.length-1))
 				  	            				formattedNames += " and ";
 				  	            		  }
 					  	            	 

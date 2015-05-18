@@ -6,11 +6,16 @@
 body{
 	background-color: #1E1E1E;
 	font-family: Helvetica Neue, Arial, sans-serif;
+	font-weight: 300;
 }
 a{
 	color: #97b749;
+	text-decoration: none;
 }
-
+a:hover{
+	color: #49B78F;
+	transition: color .5s;
+}
 /***************** SVG Drawing ******************/
 #svg-container{
 	width: auto;
@@ -93,6 +98,10 @@ p.smaller {
 }
 p.small{
 	font-size: .9em;
+	line-height: 1.4em;
+}
+.important{
+	line-height: 1.3em;
 }
 .important > img{
 	float: left;
@@ -110,6 +119,21 @@ h4.title{
 h1.project {
 	font-size: 20px;
 }	
+a.more-link{
+	display: inline-block;
+	width: auto;
+	border: 1px solid #97b749;
+	padding: 8px;
+	font-size: .9em;
+	text-decoration: none;
+	margin-top: 20px;
+}
+a.more-link:hover{
+	border-color: #49B78F;
+}
+a.more-link > .icon{
+	margin-left: 5px;
+}
 
 /***************** Smaller Windows ******************/
 @media all and (max-width: 1150px){
