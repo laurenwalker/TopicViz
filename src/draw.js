@@ -345,7 +345,8 @@ jQuery(document).ready(function($) {
 	  	            	  
 	  	            	 //Insert the title into a hover element
 		  	            tooltipText.text(title).call(wrap, 250);
-		  	            tooltipRect.attr("width", 270).attr("height", parseInt(tooltipText.style("height")) + 20);
+		  	            var height = tooltipText.node().getBBox().height || 50;
+		  	            tooltipRect.attr("width", 270).attr("height", height + 20);
 		  	            if(this.tagName == "rect"){
 			  	            var x = parseInt(d3.select(this).attr("x")) + 20,
 			  	                y = parseInt(d3.select(this).attr("y")) + 20;
