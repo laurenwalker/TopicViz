@@ -518,7 +518,8 @@ jQuery(document).ready(function($) {
 	        		  selectNodes(category);
 	        		  
 	        		  //Show the category in the side text
-		        	  var projectText = document.getElementById("cat-info-" + category);      	  
+		        	  var projectText = document.getElementById("cat-info-" + category); 
+		        	  $(projectText).find("h1").css("color", colors[category]);
 		        	  $("#sidetext").html(projectText.innerHTML);
 	        	  }
 			}

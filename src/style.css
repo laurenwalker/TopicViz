@@ -88,19 +88,3 @@ h1.project {
 a {
 	color: #00D1FF;
 }
-h1[data-category="1"]{ color:#a6cee3 ;}
-h1[data-category="2"]{color: #1f78b4;}
-h1[data-category="3"]{color: #b2df8a;}
-h1[data-category="4"]{color: #33a02c;}
-h1[data-category="5"]{color: #fb9a99;}
-h1[data-category="6"]{color: #e31a1c;}
-h1[data-category="7"]{color: #fdbf6f;}
-h1[data-category="8"]{color: #ff7f00;}
-h1[data-category="9"]{color: #cab2d6;}
-h1[data-category="10"]{color: #6a3d9a;}
-h1[data-category="11"]{color: #ffff99;}
-h1[data-category="12"]{color: #b15928;}
-h1[data-category="13"]{color: #66AA99;}
-h1[data-category="14"]{color: #BB9999;}
-h1[data-category="15"]{color: #EE5555;}
-h1[data-category="16"]{color: #9977BB;}
