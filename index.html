@@ -11,125 +11,144 @@
 
 	<div class="replacement-text" id="node-info">
 		<h2 class="node-title"></h2>
-		<h4 class="node-people"></h3>
+		<h4 class="node-people"></h4>
 		<h4 class="node-years"></h3>
 		<div class="node-summary"></div>
 	</div>
 	
 	<div class="replacement-text" id="introtext">
-		<h1>NCEAS Projects and Publications</h1>
+		<h1>Visualizing NCEAS Research Projects and Publications</h1>
 		<p class="important">
 			<img src="img/NCEAS-stacked-logo-200px.png" />
-			In the past two decades, researchers at NCEAS have produced over 2200 peer-reviewed publications as part of nearly 500 projects. These products include groundbreaking innovations in synthesis science and encompass a broad range of topics, from the ecological effects of climate change to foundational concepts in evolution and community ecology. Over time, the scope of NCEAS’s work has continued to grow to encompass conservation and resource management and the intersection between conservation and human well-being.
+			In the past two decades, researchers at NCEAS have produced over 2200 peer-reviewed publications as part of nearly 500 projects. These products include groundbreaking innovations in synthesis science and encompass a broad range of topics, from the ecological effects of climate change to foundational concepts in evolution and community ecology.  Over time, the scope of research at NCEAS has continued to expand to encompass conservation and resource management challenges and critical issues at the nexus of nature conservation and human well-being. Given the volume and range of NCEAS research over the past 20 years, NCEAS has sought to create new tools to help understand and communicate both the scope and impact of our collective work. Through this process, sixteen themes have emerged that best describe NCEAS papers and projects.
 		</p>
-		<h4 class="title">How this was made</h4>
-		<p class="small">Given the volume and range of this research, NCEAS scientists have sought new tools to understand the scope and impact of our work. Beginning in 2012, NCEAS Postdoctoral Associate (now Research Associate) Stacy Rebich Hespanha used LDA topic modeling to identify sixteen subject areas that describe the main themes addressed in the titles, abstracts, and keywords of NCEAS papers and projects. Based on these data, Stacy and NCEAS software designer Lauren Walker sketched out a design for a web-based interactive visual tool for browsing and exploring this body of work. At the first <a href="http://nceas.github.io/open-science-codefest/" target="_blank">Open Science Codefest</a> in 2014, informatics experts contributed to the development of this visualization. Lauren has since continued development of the project, resulting in this interactive publication browser.</p>
 		<h4 class="title">How to use</h4> 
-		<p class="small">Click the circles and squares to get a closer look at NCEAS projects and products and how they fit into the broad areas of focus within our work. Squares indicate individual NCEAS products (e.g. articles, reviews); circles are NCEAS research projects or Working Groups. The color indicates the topic to which the circle or square is most closely linked; the circle brightness when an category is chosen shows how closely related the product or project is to that topic. The clusters indicate projects and products that are most similar to each other at a finer scale based on 87 more specific topic areas identified through the model.</p>
+		<p class="small">The sixteen themes of NCEAS' research are represented as arcs on the outer circle. The colored circles and squares represent NCEAS projects and products and their relationships to the research themes.
+			<ul class="small"><li>Click on the <b>outer circle</b> to get a closer look at a theme and see which NCEAS projects and products most closely relate to it.</li><li><b>Circles</b> represent NCEAS research projects or Working Groups.</li><li><b>Squares</b> indicate individual NCEAS products (e.g. articles, reviews).</li><li><b>Color</b> indicates the topic to which the circle or square is most closely related.</li><li><b>Brightness</b> when a theme is chosen shows how closely related the product or project is to that topic.</li><li><b>Clusters</b> indicate projects and products that are most similar to each other at a finer scale.</li></ul></p>
+		<h4 class="title">Methodology</h4>
+		<p class="smaller"><em>Beginning in 2012, NCEAS Postdoctoral Associate (now Research Associate) Stacy Rebich Hespanha used Latent Dirichlet Allocation (LDA) topic modeling to identify these sixteen emergent subject areas that describe the main themes addressed in the titles, abstracts, and keywords of NCEAS papers and projects, as well as 87 finer-scale topics that define the clusters in this visualization. Latent Dirichlet Allocation, a probabilistic approach to discovering topics based on co-occurrence of terms, was first described in <a href="http://jmlr.csail.mit.edu/papers/v3/blei03a.html" target="_blank"> Blei, Ng &amp; Jordan, 2003</a>. A more general overview of topic modeling approaches by <a href="http://dx.doi.org/10.1145/2133806.2133826" target="_blank">David Blei (2012)</a> provides a good introduction. The location of the points was determined through the Hellinger distance and t-distributed stochastic neighbor embedding (t-SNE), which pulls each point together with its nearest neighbors in 2D space, but doesn't necessarily push dissimilar documents apart. t-SNE was described by <a href="http://jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf" target="_blank">van der Maarten and Hinton (2008)</a>.</em></em></p>
+		<p class="smaller">
+			<em>Based on these data, Stacy and NCEAS software designer Lauren Walker sketched out a design for a web-based interactive visualization tool for browsing and exploring  the entire body of work at NCEAS. During the first <a href="http://nceas.github.io/open-science-codefest/" target="_blank">Open Science Codefest</a> in 2014, informatics experts contributed to the development of this visualization. Lauren has since continued development of the project, resulting in this interactive publication browser.</em></p>
 		<div class="footnote">
-			<p class="smaller"><em>Thanks to Stacy Rebich Hespanha, <a href="https://github.com/lauren-walker">Lauren Walker</a>, LeeAnne French, Stephanie Hampton, Debbie Donahue, Morgan Visalli, Leah Fine, <a href="https://github.com/davharris" target="_blank">David Harris</a>, <a href="https://github.com/jmaccuish" target="_blank">John MacCuish</a>, and <a href="https://github.com/parkerabercrombie">Parker Abercrombie</a> for their contributions to the development of this visualization. The topic modeling and visualization was conducted using the <a href="http://www.ece.ucsb.edu/~hespanha/software/textvistools.html" target="_blank">Text Visualization Toolbox</a>, the <a href="http://d3js.org/" target="_blank">D3 JavaScript Library</a>, the <a href="http://cran.r-project.org/web/packages/tsne/index.html" target="_blank">tsne</a> R package, and <a href="http://shiny.rstudio.com/" target="_blank">Shiny</a>.</p>
-			<p class="smaller">Latent Dirichlet Allocation, a probabilistic approach to discovering topics based on co-occurrence of terms, was first described in <a href="http://jmlr.csail.mit.edu/papers/v3/blei03a.html" target="_blank"> Blei, Ng &amp; Jordan, 2003</a>. A more general overview of topic modeling approaches by <a href="http://dx.doi.org/10.1145/2133806.2133826" target="_blank">David Blei (2012)</a> provides a good introduction. The location of the points was determined through the Hellinger distance and t-distributed stochastic neighbor embedding (t-SNE), which pulls each point together with its nearest neighbors in 2D space, but doesn't necessarily push dissimilar documents apart. t-SNE was described by <a href="http://jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf" target="_blank">van der Maarten and Hinton (2008)</a>.</em></p>
+		<h4 class="title">Acknowledgments</h4>
+			<p class="smaller"><em>The open source code for this visualization <a href="https://github.com/lauren-walker/TopicViz">is on GitHub</a> and is free to use. Thanks to Stacy Rebich Hespanha, <a href="https://github.com/lauren-walker">Lauren Walker</a>, LeeAnne French, Stephanie Hampton, Debbie Donahue, Morgan Visalli, Leah Fine, <a href="https://github.com/davharris" target="_blank">David Harris</a>, <a href="https://github.com/jmaccuish" target="_blank">John MacCuish</a>, and <a href="https://github.com/parkerabercrombie">Parker Abercrombie</a> for their contributions to the development of this visualization. The topic modeling and visualization was conducted using the <a href="http://www.ece.ucsb.edu/~hespanha/software/textvistools.html" target="_blank">Text Visualization Toolbox</a>, the <a href="http://d3js.org/" target="_blank">D3 JavaScript Library</a>, the <a href="http://cran.r-project.org/web/packages/tsne/index.html" target="_blank">tsne</a> R package, and <a href="http://shiny.rstudio.com/" target="_blank">Shiny</a>.</p>
 		</div>
 	</div>
 	
 	<div class="replacement-text" id="cat-info-1">
+		<span class="pretitle">Theme</span>
 		<h1 class="project" data-category="1">Informatics, Modeling &amp; Analytics</h1>
-		<p class="project">Innovative models and data analysis methods for ecological synthesis</p>
-		<p class="project">Representative terms: models, data, methods, uncertainty, analysis</p>
+		<p class="project">The NCEAS projects and products most closely related to Informatics, Modeling &amp; Analytics describe innovative models and data analysis methods for ecological synthesis.</p>
+		<p class="project terms"><span class="pretitle">Representative terms</span> models, data, methods, uncertainty, analysis</p>
 	</div>
 	
 	<div  class="replacement-text" id="cat-info-2">
+		<span class="pretitle">Theme</span>
 		<h1 class="project" data-category="2">Biodiversity Conservation &amp; Management</h1>
-		<p class="project">Protecting biodiversity and managing scarce resources in the face of uncertainty</p>
-		<p class="project">Representative terms: conservation, biodiversity, species, threats</p>
+		<p class="project">These papers and projects address critical questions about how to protect biodiversity and manage scarce resources in the face of uncertainty.</p>
+		<p class="project terms"><span class="pretitle">Representative terms</span> conservation, biodiversity, species, threats</p>
 		<p class="project"><a href="https://www.nceas.ucsb.edu/science-highlights?id=conservation-highlights" class="more-link" target="_blank">NCEAS Science Highlights<i class="icon fa fa-external-link-square"></i></a></p>
 	</div>
 	
 	<div  class="replacement-text" id="cat-info-3">
+		<span class="pretitle">Theme</span>
 		<h1 class="project" data-category="3">Ecosystem Services</h1>
-		<p class="project">Evaluating the benefits people obtain from ecosystems</p>
-		<p class="project">Representative terms: ecosystem services, restoration, land, management</p>
+		<p class="project">NCEAS research has developed quantitative approaches and tools to evaluate the benefits people obtain from ecosystems.</p>
+		<p class="project terms"><span class="pretitle">Representative terms</span> ecosystem services, restoration, land, management</p>
 		<p class="project"><a href="https://www.nceas.ucsb.edu/science-highlights?id=services-highlights" class="more-link" target="_blank">NCEAS Science Highlights<i class="icon fa fa-external-link-square"></i></a></p>
 	</div>
 	
 	<div  class="replacement-text" id="cat-info-4">
+		<span class="pretitle">Theme</span>
 		<h1 class="project"  data-category="4">Marine Ecology and Resources Management</h1>
-		<p class="project">Marine ecosystem science and informing effective policy and management</p>
-		<p class="project">Representative terms: fisheries, marine reserves, ocean, management</p>
+		<p class="project">These papers and projects focus on interdisciplinary marine ecosystem science, and many of them have informed effective policy and management.</p>
+		<p class="project terms"><span class="pretitle">Representative terms</span> fisheries, marine reserves, ocean, management</p>
 		<p class="project"><a href="https://www.nceas.ucsb.edu/science-highlights?id=marine-highlights" class="more-link" target="_blank">NCEAS Science Highlights<i class="icon fa fa-external-link-square"></i></a></p>
 	</div>
 	
 	<div class="replacement-text" id="cat-info-5">
+		<span class="pretitle">Theme</span>
 		<h1 class="project"  data-category="5">Community Ecology</h1>
-		<p class="project">Community-scale determinants of species richness, diversity, and coexistence</p>
-		<p class="project">Representative terms: species, communities, diversity, productivity, species richness</p>
+		<p class="project">Papers and projects most closely related to Community Ecology focus on community-scale determinants of species richness, diversity, and coexistence.</p>
+		<p class="project terms"><span class="pretitle">Representative terms</span> species, communities, diversity, productivity, species richness</p>
 	</div>
 	
 	<div class="replacement-text" id="cat-info-6">
+		<span class="pretitle">Theme</span>
 		<h1 class="project"  data-category="6">Ecological Effects of Climate Change</h1>
-		<p class="project">Climate change feedbacks and effects on organisms and ecosystems</p>
-		<p class="project">Representative terms: climate change, temperature, vegetation, responses, precipitation</p>
+		<p class="project">Over 100 NCEAS projects have focused on climate change feedbacks and the effects of climate change on organisms and ecosystems.</p>
+		<p class="project terms"><span class="pretitle">Representative terms</span> climate change, temperature, vegetation, responses, precipitation</p>
 		<p class="project"><a href="https://www.nceas.ucsb.edu/science-highlights?id=climate-highlights" class="more-link" target="_blank">NCEAS Science Highlights<i class="icon fa fa-external-link-square"></i></a></p>
 	</div>
 	
 	<div class="replacement-text" id="cat-info-7">
+		<span class="pretitle">Theme</span>
 		<h1 class="project"  data-category="7">Landscape Ecology</h1>
-		<p class="project">Species movement through habitat patches and corridors</p>
-		<p class="project">Representative terms: dispersal, habitat, populations, landscape, patches</p>
+		<p class="project">NCEAS papers and projects on Landscape Ecology examine how species move through habitat patches and corridors.</p>
+		<p class="project terms"><span class="pretitle">Representative terms</span> dispersal, habitat, populations, landscape, patches</p>
 	</div>
 	
 	<div class="replacement-text" id="cat-info-8">
+		<span class="pretitle">Theme</span>
 		<h1 class="project"  data-category="8">Population Dynamics</h1>
-		<p class="project">Analyzing survival, mortality, and how populations change over time</p>
-		<p class="project">Representative terms: populations, individuals, dynamics, mortality, survival</p>
+		<p class="project">These papers and projects have contributed foundation science analyzing survival, mortality, and how populations change over time.</p>
+		<p class="project terms"><span class="pretitle">Representative terms</span> populations, individuals, dynamics, mortality, survival</p>
 	</div>
 	
 	<div class="replacement-text" id="cat-info-9">
+		<span class="pretitle">Theme</span>
 		<h1 class="project"  data-category="9">Biogeography</h1>
-		<p class="project">Global patterns of species distribution, abundance, and biodiversity</p>
-		<p class="project">Representative terms: patterns, species, range, distribution</p>
+		<p class="project">Biogeography studies global patterns of species distribution, abundance, and biodiversity and their causes.</p>
+		<p class="project terms"><span class="pretitle">Representative terms</span> patterns, species, range, distribution</p>
 	</div>
 	
 	<div class="replacement-text" id="cat-info-10">
+		<span class="pretitle">Theme</span>
 		<h1 class="project"  data-category="10">Nutrient Cycling and Productivity</h1>
-		<p class="project">How carbon, nitrogen, and other nutrients move through ecosystems</p>
-		<p class="project">Representative terms: global, npp, soil, decomposition</p>
+		<p class="project">These papers and projects examine how carbon, nitrogen, and other nutrients move through ecosystems.</p>
+		<p class="project terms"><span class="pretitle">Representative terms</span> global, npp, soil, decomposition</p>
 	</div>
 	
 	<div class="replacement-text" id="cat-info-11">
+		<span class="pretitle">Theme</span>
 		<h1 class="project"  data-category="11">Foodweb Ecology</h1>
-		<p class="project">Understanding interactions between predators, prey, and competitors</p>
-		<p class="project">Representative terms: prey, predators, food webs, coexistence</p>
+		<p class="project">NCEAS research in this area has improved our understanding of interactions between predators, prey, and competitors.</p>
+		<p class="project terms"><span class="pretitle">Representative terms</span> prey, predators, food webs, coexistence</p>
 	</div>
 	
 	<div class="replacement-text" id="cat-info-12">
+		<span class="pretitle">Theme</span>
 		<h1 class="project"  data-category="12">Paleoecology</h1>
-		<p class="project">Reconstructing the history of biodiversity on Earth</p>
-		<p class="project">Representative terms: diversity, extinction, taxa, time, fossil record</p>
+		<p class="project">NCEAS researchers have developed new approaches to reconstructing the history of biodiversity on Earth.</p>
+		<p class="project terms"><span class="pretitle">Representative terms</span> diversity, extinction, taxa, time, fossil record</p>
 	</div>
 	
 	<div class="replacement-text"id="cat-info-13">
+		<span class="pretitle">Theme</span>
 		<h1 class="project"  data-category="13">Evolution</h1>
-		<p class="project">Foundational concepts in evolution, speciation, adaptation, and phylogenetics</p>
-		<p class="project">Representative terms: evolution, selection, traits, species</p>
+		<p class="project">Papers and projects related to Evolution address foundational concepts in selection, speciation, adaptation, and phylogenetics.</p>
+		<p class="project terms"><span class="pretitle">Representative terms</span> evolution, selection, traits, species</p>
 	</div>
 	
 	<div class="replacement-text" id="cat-info-14">
+		<span class="pretitle">Theme</span>
 		<h1 class="project"  data-category="14">Forest Ecology</h1>
-		<p class="project">How tropical and temperate forests grow and change</p>
-		<p class="project">Representative terms: forest, plants, growth</p>
+		<p class="project">These papers and projects study how tropical and temperate forests grow and change.</p>
+		<p class="project terms"><span class="pretitle">Representative terms</span> forest, plants, growth</p>
 	</div>
 	
 	<div class="replacement-text" id="cat-info-15">
+		<span class="pretitle">Theme</span>
 		<h1 class="project" data-category="15">Disturbances and Invasive Species</h1>
-		<p class="project">Ecosystem responses to fire, invasions, and other disturbances</p>
-		<p class="project">Representative terms: invasion, disturbance, establishment, success</p>
+		<p class="project">Research in this area examines ecosystem responses to fire, invasions, and other disturbances.</p>
+		<p class="project terms"><span class="pretitle">Representative terms</span> invasion, disturbance, establishment, success</p>
 	</div>
 	
 	<div class="replacement-text" id="cat-info-16">
+		<span class="pretitle">Theme</span>
 		<h1 class="project" data-category="16">Infectious Disease</h1>
-		<p class="project">Drivers of the spread of disease in human and wild populations</p>
-		<p class="project">Representative terms: disease, parasites, host, pathogens, transmission</p>
+		<p class="project">These papers and projects have contributed new knowledge about the drivers of the spread of disease in human and wild populations.</p>
+		<p class="project terms"><span class="pretitle">Representative terms</span> disease, parasites, host, pathogens, transmission</p>
 		<p class="project"><a href="https://www.nceas.ucsb.edu/science-highlights?id=disease-highlights" class="more-link" target="_blank">NCEAS Science Highlights <i class="icon fa fa-external-link-square"></i></a></p>
 	</div>
 	<script src="assets/jquery.min.js"></script>

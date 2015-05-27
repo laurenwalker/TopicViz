@@ -196,7 +196,7 @@ jQuery(document).ready(function($) {
 								   .start();
 
 					//Start the timeout so the animation doesn't last forever
-					var timeout = window.setTimeout(start, 10000);
+					var timeout = window.setTimeout(start, 12000);
 					
 					var nodeGroup = svg.append("g")
 					                   .attr("class", "node-group");
