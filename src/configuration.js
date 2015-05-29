@@ -79,5 +79,6 @@
 		arcThickness: 50,
 		parentEl: "body",
 		inactiveArcColor: "#F0F0F0",
-		parentEl: "#svg-container"
+		parentEl: "#svg-container",
+		theme: "black" //Can be "white" or default/"black"
 	}

@@ -140,6 +140,30 @@ a.more-link > .icon{
 	margin-left: 5px;
 }
 
+/***************** White Theme ******************/
+body.white {
+    background-color: #FFF;
+}
+
+.white #sidetext {
+    color: #333;
+    font-weight: normal;
+}
+
+.white .smaller {
+    color: #666;
+    font-weight: normal;
+}
+
+.white .pretitle {
+    color: #888;
+}
+
+.white .more-link {
+    border: 1px solid #758E39;
+    color: #758E39;
+}
+
 /***************** Smaller Windows ******************/
 @media all and (max-width: 1150px){
 	#sidetext{

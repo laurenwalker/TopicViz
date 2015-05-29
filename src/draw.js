@@ -19,6 +19,10 @@ jQuery(document).ready(function($) {
 				//Get the column names from the terms data
 				var categoryID = Object.keys(terms[0])[0];
 				
+				//Which theme are we using?
+				var theme = configuration.theme || "black";
+				$("body").addClass(theme);
+				
 				//Set up some basic configuration for the SVG
 				var width  = 830,
 				    height = 830,
