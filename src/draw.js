@@ -139,7 +139,7 @@ jQuery(document).ready(function($) {
 					// The largest node for each cluster.
 					var clusters = new Array(m);
 					
-					//Make an array of the coords
+					//************** Make an array of the coords ************//
 					$.each(keys, function(i, key){
 						var node = $.grep(table, function(e){ return e.primaryKey == key; });
 						var category100 = node[0].maxtopic100selected_id;
@@ -164,10 +164,9 @@ jQuery(document).ready(function($) {
 					});
 					
 					//Set up the dimensions of our svg drawing
-					//var margin = {left: 100, right: 100, top: 100, bottom: 100},
-					var	padding = 2, // separation between same-color nodes
-				    	clusterPadding = 4, // separation between different-color nodes
-				    	maxRadius = 4,
+					var	padding = 2,        // separation between nodes within a cluster
+				    	clusterPadding = 4, // separation between clusters
+				    	maxRadius = 4,     
 				    	rectLength = maxRadius*1.5;
 					
 					//Find the min and max values 
@@ -175,16 +174,6 @@ jQuery(document).ready(function($) {
 						xMax = d3.max(keys, function(d){ return coords[d][0]; }),
 						yMin = d3.min(keys, function(d){ return coords[d][1]; }),
 						yMax = d3.max(keys, function(d){ return coords[d][1]; });		
-					
-					//Set up the scale on the x-axis using the min and max x values
-					/*var xScale = d3.scale.linear()
-					  			   .domain([xMin, xMax])
-					  			   .range([margin.left, width - margin.right]);
-			
-					//Set up the scale on the y-axis using the min and max y values
-					var yScale = d3.scale.linear()
-								   .domain([yMin, yMax])
-								   .range([margin.top, height - margin.bottom]);*/
 					  
 					var n = keys.length, // total number of nodes
 				    	m = 16; // number of distinct clusters
@@ -305,13 +294,14 @@ jQuery(document).ready(function($) {
 					  	            	 
 					  	            	 $("#sidetext").html(document.getElementById("node-info").innerHTML);	
 					  	              });
-					
+
+					//************** Show a tooltip with node details when the node is moused over ************//
 					//Insert an element to hold the title info on hover
 					var tooltip = svg.append("g")
 								     .attr("id", "node-tooltip");
 					
            		    var tooltipRect = tooltip.append("rect")
-							   			     .attr("width", 270)
+							   			     .attr("width", configuration.tooltipWidth)
 									         .attr("height", 100);
                    		  
 					var tooltipText = tooltip.append("text")
@@ -320,31 +310,6 @@ jQuery(document).ready(function($) {
 											 .attr("x", 10)
 											 .attr("y", 20)
 											 .attr("text-anchor", "start");
-					
-					function wrap(text, width) {
-						  text.each(function() {
-						    var text = d3.select(this),
-						        words = text.text().split(/\s+/).reverse(),
-						        word,
-						        line = [],
-						        lineNumber = 0,
-						        lineHeight = 1.1, // ems
-						        x = text.attr("x"),
-						        y = text.attr("y"),
-						        dy = parseFloat(text.attr("dy")),
-						        tspan = text.text(null).append("tspan").attr("x", x).attr("y", y).attr("dx", 10).attr("dy",++lineNumber * lineHeight + dy + "em");
-						    while (word = words.pop()) {
-						      line.push(word);
-						      tspan.text(line.join(" "));
-						      if (tspan.node().getComputedTextLength() > width) {
-						        line.pop();
-						        tspan.text(line.join(" "));
-						        line = [word];
-						        tspan = text.append("tspan").attr("x", x).attr("y", y).attr("dx", 10).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
-						      }
-						    }
-						  });
-						}
 					
 					allNodes.on("mouseover", function(d){
 						 if(!tooltipVisible) $("#node-tooltip").css("display", "block");
@@ -363,9 +328,10 @@ jQuery(document).ready(function($) {
 	  	            		  var title    = "Project: " + row.Title_for_TM;
 	  	            	  
 	  	            	 //Insert the title into a hover element
-		  	            tooltipText.text(title).call(wrap, 250);
-		  	            var height = tooltipText.node().getBBox().height || 50;
-		  	            tooltipRect.attr("width", 270).attr("height", height + 20);
+		  	            tooltipText.text(title).call(wrap, configuration.tooltipWidth - 20);
+		  	            var tooltipHeight = tooltipText.node().getBBox().height || 50; tooltipHeight += 20;
+		  	            tooltipRect.attr("width", configuration.tooltipWidth)
+		  	            		   .attr("height", tooltipHeight);
 		  	            if(this.tagName == "rect"){
 			  	            var x = parseInt(d3.select(this).attr("x")) + 20,
 			  	                y = parseInt(d3.select(this).attr("y")) + 20;
@@ -374,8 +340,19 @@ jQuery(document).ready(function($) {
 				  	          var x = parseInt(d3.select(this).attr("cx")) + 24,
 			  	                  y = parseInt(d3.select(this).attr("cy")) + 24;
 		  	            }
-		  	           // tooltipText.attr("x", x);
-			  	       // tooltipText.attr("y", y);
+		  	            
+		  	            //Check that the tooltip will not be overflowing the edge of the SVG
+		  	            var rightEdge = width,
+		  	            	tooltipRightEdge = x + configuration.tooltipWidth,
+		  	            	bottomEdge = height,
+		  	            	tooltipBottomEdge = y + tooltipHeight;
+		  	            
+		  	            //Adjust the x and y coordinates of the tooltip if it will be overflowing the right or bottom edge (left and top edges are not at risk)
+		  	            if(tooltipRightEdge > rightEdge)
+		  	            	x = x - (tooltipRightEdge - rightEdge - 5);
+		  	            if(tooltipBottomEdge > bottomEdge)
+		  	            	y = y - (tooltipBottomEdge - bottomEdge - 5);
+		  	            
 			  	        $("#node-tooltip tspan").attr("x", x);
 			  	        $("#node-tooltip tspan").attr("y", y);
 		  	            tooltipRect.attr("x", x);
@@ -390,9 +367,7 @@ jQuery(document).ready(function($) {
 						force.stop();
 						window.clearTimeout(timeout);
 					}
-			
-					//force.start();
-					
+							
 					allNodes.transition()
 					    .duration(5)
 					    .delay(function(d, i) { return i * 2; })
@@ -492,9 +467,9 @@ jQuery(document).ready(function($) {
 				  .style("opacity", .8);
 			}
 			
-			/*
+			/************************************************************************************
 			 * Select the specified category and "filter" the nodes related to that category
-			 */
+			 *************************************************************************************/
 			function selectCategory(element, category){
 				  //If this arc is already selected...
 	        	  if(d3.select(element).classed("selected")){
@@ -543,6 +518,31 @@ jQuery(document).ready(function($) {
 		        	  $("#sidetext").html(projectText.innerHTML);
 	        	  }
 			}
+			
+			function wrap(text, width) {
+				  text.each(function() {
+				    var text = d3.select(this),
+				        words = text.text().split(/\s+/).reverse(),
+				        word,
+				        line = [],
+				        lineNumber = 0,
+				        lineHeight = 1.1, // ems
+				        x = text.attr("x"),
+				        y = text.attr("y"),
+				        dy = parseFloat(text.attr("dy")),
+				        tspan = text.text(null).append("tspan").attr("x", x).attr("y", y).attr("dx", 10).attr("dy",++lineNumber * lineHeight + dy + "em");
+				    while (word = words.pop()) {
+				      line.push(word);
+				      tspan.text(line.join(" "));
+				      if (tspan.node().getComputedTextLength() > width) {
+				        line.pop();
+				        tspan.text(line.join(" "));
+				        line = [word];
+				        tspan = text.append("tspan").attr("x", x).attr("y", y).attr("dx", 10).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+				      }
+				    }
+				  });
+				}
 	
 			});
 		});
