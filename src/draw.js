@@ -548,8 +548,8 @@ jQuery(document).ready(function($) {
 			 * Setup Filters - Listen to filter inputs
 			 *************************************************************************************/	
 			function setupFilters(){
-				var filterElements = $("form .filters .filter"),
-					submitButton   = $("form .filters .button");
+				var filterElements = $("form.filters .filter"),
+					submitButton   = $("form.filters .button");
 				
 				//When a user types anything in the filter input, check if it is the 'Enter' key and if so, submit the value as a filter query
 				$(filterElements).on("keypress", function(e){
