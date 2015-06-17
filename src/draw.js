@@ -43,13 +43,13 @@ jQuery(document).ready(function($) {
 				
 				drawArcs();
 				drawNodes();
-				
+				setupFilters();				
 				
 				//================ FUNCTIONS =======================
 				
-				/*
-				 * drawArcs creates the SVG and draws the donut shape with each of the categories as an equally-sized arc of the donut. 
-				 */
+				/************************************************************************************
+				 * Draw Arcs - creates the SVG and draws the donut shape with each of the categories as an equally-sized arc of the donut. 
+				 *************************************************************************************/
 				function drawArcs(){
 					
 					//Create a d3 arc shape with an inner and outer radius
@@ -128,6 +128,9 @@ jQuery(document).ready(function($) {
 						  .attr("xlink:href", function(d){ return "#arc-" + d.id; });
 				}
 
+				/************************************************************************************
+				 * Draw Nodes - creates a circle or square "node" for each row in the table (products and projects) with a bouncing-in animation 
+				 *************************************************************************************/
 				function drawNodes(){			
 						
 					//Access the data with the object keys (unique ids)
@@ -139,7 +142,7 @@ jQuery(document).ready(function($) {
 					// The largest node for each cluster.
 					var clusters = new Array(m);
 					
-					//Make an array of the coords
+					//************** Make an array of the coords ************//
 					$.each(keys, function(i, key){
 						var node = $.grep(table, function(e){ return e.primaryKey == key; });
 						var category100 = node[0].maxtopic100selected_id;
@@ -163,11 +166,11 @@ jQuery(document).ready(function($) {
 						nodes.push(d);
 					});
 					
+					//************************** Draw the nodes ************************//
 					//Set up the dimensions of our svg drawing
-					//var margin = {left: 100, right: 100, top: 100, bottom: 100},
-					var	padding = 2, // separation between same-color nodes
-				    	clusterPadding = 4, // separation between different-color nodes
-				    	maxRadius = 4,
+					var	padding = 2,        // separation between nodes within a cluster
+				    	clusterPadding = 4, // separation between clusters
+				    	maxRadius = 4,     
 				    	rectLength = maxRadius*1.5;
 					
 					//Find the min and max values 
@@ -175,16 +178,6 @@ jQuery(document).ready(function($) {
 						xMax = d3.max(keys, function(d){ return coords[d][0]; }),
 						yMin = d3.min(keys, function(d){ return coords[d][1]; }),
 						yMax = d3.max(keys, function(d){ return coords[d][1]; });		
-					
-					//Set up the scale on the x-axis using the min and max x values
-					/*var xScale = d3.scale.linear()
-					  			   .domain([xMin, xMax])
-					  			   .range([margin.left, width - margin.right]);
-			
-					//Set up the scale on the y-axis using the min and max y values
-					var yScale = d3.scale.linear()
-								   .domain([yMin, yMax])
-								   .range([margin.top, height - margin.bottom]);*/
 					  
 					var n = keys.length, // total number of nodes
 				    	m = 16; // number of distinct clusters
@@ -193,9 +186,6 @@ jQuery(document).ready(function($) {
 								   .nodes(nodes)
 								   .size([width, height])
 								   .gravity(.60)
-								 //.charge(50)
-								 //.chargeDistance(10)
-								 //.theta(.01)
 								   .on("tick", tick)
 								   .start();
 
@@ -305,13 +295,14 @@ jQuery(document).ready(function($) {
 					  	            	 
 					  	            	 $("#sidetext").html(document.getElementById("node-info").innerHTML);	
 					  	              });
-					
+
+					//************** Show a tooltip with node details when the node is moused over ************//
 					//Insert an element to hold the title info on hover
 					var tooltip = svg.append("g")
 								     .attr("id", "node-tooltip");
 					
            		    var tooltipRect = tooltip.append("rect")
-							   			     .attr("width", 270)
+							   			     .attr("width", configuration.tooltipWidth)
 									         .attr("height", 100);
                    		  
 					var tooltipText = tooltip.append("text")
@@ -320,31 +311,6 @@ jQuery(document).ready(function($) {
 											 .attr("x", 10)
 											 .attr("y", 20)
 											 .attr("text-anchor", "start");
-					
-					function wrap(text, width) {
-						  text.each(function() {
-						    var text = d3.select(this),
-						        words = text.text().split(/\s+/).reverse(),
-						        word,
-						        line = [],
-						        lineNumber = 0,
-						        lineHeight = 1.1, // ems
-						        x = text.attr("x"),
-						        y = text.attr("y"),
-						        dy = parseFloat(text.attr("dy")),
-						        tspan = text.text(null).append("tspan").attr("x", x).attr("y", y).attr("dx", 10).attr("dy",++lineNumber * lineHeight + dy + "em");
-						    while (word = words.pop()) {
-						      line.push(word);
-						      tspan.text(line.join(" "));
-						      if (tspan.node().getComputedTextLength() > width) {
-						        line.pop();
-						        tspan.text(line.join(" "));
-						        line = [word];
-						        tspan = text.append("tspan").attr("x", x).attr("y", y).attr("dx", 10).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
-						      }
-						    }
-						  });
-						}
 					
 					allNodes.on("mouseover", function(d){
 						 if(!tooltipVisible) $("#node-tooltip").css("display", "block");
@@ -363,9 +329,10 @@ jQuery(document).ready(function($) {
 	  	            		  var title    = "Project: " + row.Title_for_TM;
 	  	            	  
 	  	            	 //Insert the title into a hover element
-		  	            tooltipText.text(title).call(wrap, 250);
-		  	            var height = tooltipText.node().getBBox().height || 50;
-		  	            tooltipRect.attr("width", 270).attr("height", height + 20);
+		  	            tooltipText.text(title).call(wrap, configuration.tooltipWidth - 20);
+		  	            var tooltipHeight = tooltipText.node().getBBox().height || 50; tooltipHeight += 20;
+		  	            tooltipRect.attr("width", configuration.tooltipWidth)
+		  	            		   .attr("height", tooltipHeight);
 		  	            if(this.tagName == "rect"){
 			  	            var x = parseInt(d3.select(this).attr("x")) + 20,
 			  	                y = parseInt(d3.select(this).attr("y")) + 20;
@@ -374,8 +341,19 @@ jQuery(document).ready(function($) {
 				  	          var x = parseInt(d3.select(this).attr("cx")) + 24,
 			  	                  y = parseInt(d3.select(this).attr("cy")) + 24;
 		  	            }
-		  	           // tooltipText.attr("x", x);
-			  	       // tooltipText.attr("y", y);
+		  	            
+		  	            //Check that the tooltip will not be overflowing the edge of the SVG
+		  	            var rightEdge = width,
+		  	            	tooltipRightEdge = x + configuration.tooltipWidth,
+		  	            	bottomEdge = height,
+		  	            	tooltipBottomEdge = y + tooltipHeight;
+		  	            
+		  	            //Adjust the x and y coordinates of the tooltip if it will be overflowing the right or bottom edge (left and top edges are not at risk)
+		  	            if(tooltipRightEdge > rightEdge)
+		  	            	x = x - (tooltipRightEdge - rightEdge - 5);
+		  	            if(tooltipBottomEdge > bottomEdge)
+		  	            	y = y - (tooltipBottomEdge - bottomEdge - 5);
+		  	            
 			  	        $("#node-tooltip tspan").attr("x", x);
 			  	        $("#node-tooltip tspan").attr("y", y);
 		  	            tooltipRect.attr("x", x);
@@ -385,14 +363,13 @@ jQuery(document).ready(function($) {
 					allNodes.on("mouseout", function(d){
 						$("#node-tooltip").css("display", "none");
 					});
-										
+						
+					//** Stop the animation and clear the animation timeout **//
 					function start(){
 						force.stop();
 						window.clearTimeout(timeout);
 					}
-			
-					//force.start();
-					
+							
 					allNodes.transition()
 					    .duration(5)
 					    .delay(function(d, i) { return i * 2; })
@@ -401,6 +378,7 @@ jQuery(document).ready(function($) {
 					         return function(t) { return d.radius = i(t); };
 					    });
 				
+					//** Generic functions used for node animation **//
 					function tick(e) {
 						allNodes.each(cluster(10 * e.alpha * e.alpha))
 					      .each(collide(.5));
@@ -409,8 +387,7 @@ jQuery(document).ready(function($) {
 					      	   .attr("cy", function(d) { return d.y; });
 					    squares.attr("x", function(d) { return d.x - (rectLength/2); })
 				      	       .attr("y", function(d) { return d.y - (rectLength/2); });
-					}
-				
+					}				
 					// Move d to be adjacent to the cluster node.
 					function cluster(alpha) {
 					  return function(d) {
@@ -428,8 +405,7 @@ jQuery(document).ready(function($) {
 					      cluster.y += y;
 					    }
 					  };
-					}
-				
+					}				
 					// Resolves collisions between d and all other circles.
 					function collide(alpha) {
 					  var quadtree = d3.geom.quadtree(nodes);
@@ -458,7 +434,10 @@ jQuery(document).ready(function($) {
 					  };
 					}
 			}
-				
+
+			/************************************************************************************
+			 * Select Nodes - Changes the node opacity and color to correspond to its weight for the given topic/category
+			 *************************************************************************************/	
 			function selectNodes(category){
 				d3.selectAll(".node")
 				  .transition()
@@ -468,56 +447,27 @@ jQuery(document).ready(function($) {
 					  var row = $.grep(table, function(e){ return e.primaryKey == key; });
 					  var categoryName = "lda020selected_topicWeights_" + category;
 					  return row[0][categoryName];
-				  });
-				
-				/*d3.selectAll("[data-category='"+category+"']")
-				  .attr("r", function(d){
-					  return 6;
 				  })
-				  .attr("stroke", "#FFFFFF")
-				  .attr("stroke-width", "2")
-				  .style("opacity", function(d){
-					  var key = $(this).attr("data-key");
-					  var row = $.grep(table, function(e){ return e.primaryKey == key; });
-					  var categoryName = "lda020selected_topicWeights_ " + category;
-					  console.log(row[0][categoryName]);
-					  return row[0][categoryName];
-				  });*/
+				  .style("fill", function(d){
+					  return colors[$(this).attr("data-category")];
+				  })
+				  .style("stroke", function(d){
+					  return colors[$(this).attr("data-category")];
+				  });
 			}
 			
-			function resetNodes(){
-				d3.selectAll(".node")
-				  .transition()
-				  .duration(800)
-				  .style("opacity", .8);
-			}
-			
-			/*
-			 * Select the specified category and "filter" the nodes related to that category
-			 */
+			/************************************************************************************
+			 * Select Category - Selects the specified category and "filter" the nodes related to that category
+			 *************************************************************************************/
 			function selectCategory(element, category){
 				  //If this arc is already selected...
 	        	  if(d3.select(element).classed("selected")){
-	        		 
-	        		  //Change all the other arc colors back to normal
-	        		  $("path.arc").css("fill", function(){
-	        			  return colors[$(this).attr("data-category")];
-	        		  });
-	        		  
-	        		  $(".arc-label").removeClass("inactive");
-	        		  
-	        		  //Make the new list of classes and add them
-	        		  var newClasses = $(element).attr("class").replace("selected", "");
-	        		  $(element).attr("class", newClasses);
-	        		  
-	        		  //Reset the nodes
-	        		  resetNodes();
-	        		  
-	        		  //change the text back to the original
-		        	  $("#sidetext").html(intro);
+	        		 reset();
 	        	  }
 	        	  // If this is a new selection...
 	        	  else{
+	        		  resetFilters();
+
 	        		  //Select all the other arcs and color them as inactive
 	        		  $("path.arc").css("fill", (configuration.inactiveArcColor || "#F0F0F0"));
 	        		  $(".arc-label").addClass("inactive");
@@ -543,6 +493,197 @@ jQuery(document).ready(function($) {
 		        	  $("#sidetext").html(projectText.innerHTML);
 	        	  }
 			}
+			
+			/************************************************************************************
+			 * Reset - Shortcut function for restting the whole app
+			 *************************************************************************************/	
+			function reset(){
+				resetNodes();
+				resetCategories();
+      		  	resetFilters();
+			}
+			
+			/************************************************************************************
+			 * Reset Nodes - Resets the color/opacity of the nodes
+			 *************************************************************************************/
+			function resetNodes(){
+				d3.selectAll(".node")
+				  .transition()
+				  .duration(800)
+				  .style("opacity", 1)
+				  .style("fill", function(d){
+					  return colors[$(this).attr("data-category")];
+				  })
+				  .style("stroke", function(d){
+					  return colors[$(this).attr("data-category")];
+				  });
+			}
+			
+			/************************************************************************************
+			 * Reset Categories - resets the category colors and reverts back to introduction text
+			 *************************************************************************************/	
+			function resetCategories(){
+				//Change all the other arc colors back to normal
+	  		  	$("path.arc").css("fill", function(){
+	  			  return colors[$(this).attr("data-category")];
+	  		  	});
+	  		  
+	  		  	//Mark all category arcs as inactive
+	  		  	$(".arc-label").removeClass("inactive");
+	  		  
+	  		  	//Make the new list of classes and add them
+	  		  	var prevSelected = $(".arc-label.selected");
+	  		  	var newClasses = prevSelected.attr("class").replace("selected", "");
+	  		  	prevSelected.attr("class", newClasses);
+	  		  
+	  		  	//change the text back to the original
+	  		  	$("#sidetext").html(intro);
+			}
+			
+			function resetFilters(){
+				document.location.hash = "";
+			}
+			
+			/************************************************************************************
+			 * Setup Filters - Listen to filter inputs
+			 *************************************************************************************/	
+			function setupFilters(){
+				var filterElements = $("form .filters .filter"),
+					submitButton   = $("form .filters .button");
+				
+				//When a user types anything in the filter input, check if it is the 'Enter' key and if so, submit the value as a filter query
+				$(filterElements).on("keypress", function(e){
+					//Only proceed if the user pressed Enter
+					if(e.keyCode != 13) return;
+					
+					//Prevent the form from submitting to the target/page refreshing
+					e.preventDefault();
+					
+					//Get the filter information
+					var inputElement = $(e.target);
+					
+					var options = {
+						attribute: inputElement.attr("data-table-col"),
+						filterName: inputElement.attr("name"),
+						value: inputElement.val()
+					}
+					filterNodes(options);	
+				});
+				
+				
+			}
+			
+			/************************************************************************************
+			 * Filter Nodes - Highlight only the nodes with the given attributes
+			 *************************************************************************************/				
+			function filterNodes(options){				
+				var attributes  = options.attribute.split(" "),
+					filterValue = options.value;
+
+					d3.selectAll(".node")
+					  .transition()
+					  .duration(800)
+					  .each(function(d){
+						  var key = $(this).attr("data-key"),
+						  	  row = $.grep(table, function(e){ return e.primaryKey == key; }),
+						  	  attributeValues = "";					  
+						  
+						  for(var i=0; i < attributes.length; i++){
+								var attribute = attributes[i],
+									rawValue = row[0][attribute];
+								
+								attributeValues += " " + rawValue + " " + rawValue.toLowerCase();
+								
+								//Check for formatted names like "Smith, John". They will be seperated by semi-colons (;)
+								if(rawValue.indexOf(";") > -1){
+									var names = rawValue.split(";"); //Get an array of names
+			  	            		names = names.filter(function(n){ return(n != " "); }); //Filter out spaces
+									
+			  	            		//For each name, separate the first and last names and combine them together in order, as they are likely to be searched on
+			  	            		for(var x=0; x<names.length; x++){
+										var fullName = names[x].split(","),
+											formattedName = fullName[1] + " " + fullName[0];
+										attributeValues += " " + formattedName + " " + formattedName.toLowerCase();
+									}
+								}
+						  }
+						  
+						  //If there is a value for this attribute(s)
+						  if(attributeValues.length > 0){
+							  //If our filter/search query string is a substring of the attribute value(s)
+							  if((attributeValues.indexOf(filterValue) > -1) || (attributeValues.indexOf(filterValue.toLowerCase()) > -1)){
+								  //Make these nodes brightest and use their category color
+								  $(this).css("opacity", 1)
+									   .css("fill",   colors[$(this).attr("data-category")])
+									   .css("stroke", colors[$(this).attr("data-category")]);
+							  }
+							  //Otherwise fade out this nodes and make them grayish
+							  else 
+								  $(this).css("opacity", 0.05).css("fill", "#000000").css("stroke", "#000000");
+						  }
+						  //Otherwise fade out this nodes and make them grayish						  
+						  else 
+							  $(this).css("opacity", 0.05).css("fill", "#000000").css("stroke", "#000000");
+					  });
+					
+					//Clear the text inputs
+					$("input.filter").val("");
+					
+					//Update the URL with the query string
+					var filters     = document.location.hash.split("?"),
+						newLocation = "";
+					
+					//Iterate over each filter query string from the URL
+					for(var i=0; i<filters.length; i++){
+						//Get the filter category name
+						var filterCategory = filters[i].substring(0, filters[i].indexOf("="));	
+						
+						//If this filter category is not the current filter we just applied, then add it to the URL
+						if((filterCategory != options.filterName) && (filterCategory.length > 0) && (filters[i].length > 0))
+							newLocation += "?" + filterCategory + "=" + filters[i];					
+					}
+					
+					//Add the new filter to the URL
+					newLocation += "?" + options.filterName + "=" + filterValue;
+					
+					//Update the URL
+					document.location.hash = newLocation;
+			}
+			
+			function wrap(text, width) {
+				  text.each(function() {
+				    var text = d3.select(this),
+				        words = text.text().split(/\s+/).reverse(),
+				        word,
+				        line = [],
+				        lineNumber = 0,
+				        lineHeight = 1.1, // ems
+				        x = text.attr("x"),
+				        y = text.attr("y"),
+				        dy = parseFloat(text.attr("dy")),
+				        tspan = text.text(null).append("tspan").attr("x", x).attr("y", y).attr("dx", 10).attr("dy",++lineNumber * lineHeight + dy + "em");
+				    while (word = words.pop()) {
+				      line.push(word);
+				      tspan.text(line.join(" "));
+				      if (tspan.node().getComputedTextLength() > width) {
+				        line.pop();
+				        tspan.text(line.join(" "));
+				        line = [word];
+				        tspan = text.append("tspan").attr("x", x).attr("y", y).attr("dx", 10).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+				      }
+				    }
+				  });
+				}
+			
+			/************************************************************************************
+			 * Simple Expand/Collapse for long text
+			 *************************************************************************************/	
+			$(".expander").on("click", function(e){
+				var targetID = $(e.target).attr("data-target") || $(e.target).parents("[data-target]").attr("data-target");
+				
+				var targetElement = $("#" + targetID);
+				targetElement.slideToggle();
+			});
 	
 			});
 		});
