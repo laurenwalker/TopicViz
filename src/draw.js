@@ -588,15 +588,18 @@ jQuery(document).ready(function($) {
 			 * Filter Nodes - Highlight only the nodes with the given attributes
 			 *************************************************************************************/				
 			function filterNodes(){			
-				
-				//De-filter all the nodes first
-				$(".node").css("opacity", 0.05).css("fill", "#000000").css("stroke", "#000000");
-				
 				//If there are no filters, then just reset all the nodes and exit
 				if(filterList.length == 0){
 					reset();
 					return;
 				}
+				
+				//De-filter all the nodes first
+				$(".node").css("opacity", 0.05).css("fill", "#000000").css("stroke", "#000000");
+				
+				//Get the filter list from the URL and start a new URL hash string
+				var filtersFromURL     = document.location.hash.split("?"),
+					newLocation        = "";
 				
 				//Iterate over each filter and make its nodes opaque and display a filter label				
 				for(var x=0; x<filterList.length; x++){
@@ -685,25 +688,22 @@ jQuery(document).ready(function($) {
 					$(".button.reset").removeClass("hidden");
 					
 					//**Update the URL with the query string**
-					var filters     = document.location.hash.split("?"),
-						newLocation = "";
-					
 					//Iterate over each filter query string from the URL
-					for(var i=0; i<filters.length; i++){
+					for(var i=0; i<filtersFromURL.length; i++){
 						//Get the filter category name
-						var filterCategory = filters[i].substring(0, filters[i].indexOf("="));	
+						var filterCategory = filtersFromURL[i].substring(0, filtersFromURL[i].indexOf("="));	
 						
 						//If this filter category is not the current filter we just applied, then add it to the URL
-						if((filterCategory != filterName) && (filterCategory.length > 0) && (filters[i].length > 0))
-							newLocation += "?" + filterCategory + "=" + filters[i];					
+						if((filterCategory != filterName) && (filterCategory.length > 0) && (filtersFromURL[i].length > 0))
+							newLocation += "?" + filterCategory + "=" + filtersFromURL[i];					
 					}
 					
 					//Add the new filter to the URL
-					newLocation += "?" + filterName + "=" + filterValue;
-					
-					//Update the URL
-					document.location.hash = newLocation;
+					newLocation += "?" + filterName + "=" + filterValue;					
 				}
+				
+				//Update the URL
+				document.location.hash = newLocation;
 			}
 			
 			function wrap(text, width) {
