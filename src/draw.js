@@ -36,7 +36,7 @@ jQuery(document).ready(function($) {
 				    .attr("width",  width)
 				    .attr("height", height)
 				    .attr("viewBox", "0,0," + width + "," + height*scale);
-				
+								
         		showText();
 				drawArcs();
 				drawNodes();
@@ -491,6 +491,8 @@ jQuery(document).ready(function($) {
 	        	  var projectText = document.getElementById("cat-info-" + category); 
 	        	  $(projectText).find("h1").css("color", colors[category]);
 	        	  $("#sidetext").html(projectText.innerHTML);
+	        	  
+	        	  //Show the reset button
 	        	  $(".button.reset").removeClass("hidden");
 			}
 			
@@ -545,14 +547,18 @@ jQuery(document).ready(function($) {
 			
 			function resetFilters(){
 				document.location.hash = "";
+				$(".filter.label").detach();
+				window.filterList = new Array();
 			}
 			
 			/************************************************************************************
 			 * Setup Filters - Listen to filter inputs
 			 *************************************************************************************/	
 			function setupFilters(){
+				window.filterList = new Array();
+				
 				var filterElements = $("form.filters .filter"),
-					submitButton   = $("form.filters .button")
+					submitButton   = $("form.filters .button"),
 					resetButton    = $(".reset.button");
 				
 				//When a user types anything in the filter input, check if it is the 'Enter' key and if so, submit the value as a filter query
@@ -571,7 +577,8 @@ jQuery(document).ready(function($) {
 						filterName: inputElement.attr("name"),
 						value: inputElement.val()
 					}
-					filterNodes(options);	
+					filterList.push(options);
+					filterNodes();	
 				});
 				
 				resetButton.on("click", reset);
@@ -580,10 +587,24 @@ jQuery(document).ready(function($) {
 			/************************************************************************************
 			 * Filter Nodes - Highlight only the nodes with the given attributes
 			 *************************************************************************************/				
-			function filterNodes(options){				
-				var attributes  = options.attribute.split(" "),
-					filterValue = options.value;
-
+			function filterNodes(){			
+				
+				//De-filter all the nodes first
+				$(".node").css("opacity", 0.05).css("fill", "#000000").css("stroke", "#000000");
+				
+				//If there are no filters, then just reset all the nodes and exit
+				if(filterList.length == 0){
+					reset();
+					return;
+				}
+				
+				//Iterate over each filter and make its nodes opaque and display a filter label				
+				for(var x=0; x<filterList.length; x++){
+					var options     = filterList[x],
+						attributes  = options.attribute.split(" "),
+						filterValue = options.value,
+						filterName  = options.filterName;
+	
 					d3.selectAll(".node")
 					  .transition()
 					  .duration(800)
@@ -621,19 +642,49 @@ jQuery(document).ready(function($) {
 									   .css("fill",   colors[$(this).attr("data-category")])
 									   .css("stroke", colors[$(this).attr("data-category")]);
 							  }
-							  //Otherwise fade out this nodes and make them grayish
-							  else 
-								  $(this).css("opacity", 0.05).css("fill", "#000000").css("stroke", "#000000");
 						  }
-						  //Otherwise fade out this nodes and make them grayish						  
-						  else 
-							  $(this).css("opacity", 0.05).css("fill", "#000000").css("stroke", "#000000");
-					  });
+					  });						
 					
-					//Clear the text inputs
-					$("input.filter").val("");
+					if(!options.label){
+						//**Change the visual filters**
+						//Clear the text inputs
+						$("input.filter").val("");
+						
+						//**Add a new filter label**						
+						//Capatalize the first letter of each word for the label
+						var labelTitle = function(s){
+						    var sa = s.replace(/-/g,' ');
+						    var saa = sa.toLowerCase();
+						    var sb = saa.replace( /(^|\s)([a-z])/g , function(m,p1,p2){ return p1+p2.toUpperCase(); } );
+						    var sc = sb.replace(/\s+/g, '-');
+						    return sc;
+						}(filterName);
+						
+						var filterLabel = $(document.createElement("div")).addClass("filter label").text(labelTitle + ": " + filterValue);
+						var labelClose  = $(document.createElement("i")).addClass("icon close fa fa-close").attr("data-name", filterName).attr("data-value", filterValue);
+						$(filterLabel).append(labelClose);
+						$("form.filters").append(filterLabel);
+						options.label = filterLabel;
+						
+						//When the close button is clicked, remove this filter
+						$(labelClose).on("click", function(e){							
+							//Remove this filter from the filter list 
+							window.filterList = window.filterList.filter(function(filter){
+								return !((filter.filterName == filterName) && (filter.value == filterValue))
+							});
+							
+							//Remove the filter label from the page
+							$(filterLabel).detach();
+							
+							//Refilter all the nodes
+							filterNodes();
+						});
+					}
+			
+					//Show the reset button
+					$(".button.reset").removeClass("hidden");
 					
-					//Update the URL with the query string
+					//**Update the URL with the query string**
 					var filters     = document.location.hash.split("?"),
 						newLocation = "";
 					
@@ -643,15 +694,16 @@ jQuery(document).ready(function($) {
 						var filterCategory = filters[i].substring(0, filters[i].indexOf("="));	
 						
 						//If this filter category is not the current filter we just applied, then add it to the URL
-						if((filterCategory != options.filterName) && (filterCategory.length > 0) && (filters[i].length > 0))
+						if((filterCategory != filterName) && (filterCategory.length > 0) && (filters[i].length > 0))
 							newLocation += "?" + filterCategory + "=" + filters[i];					
 					}
 					
 					//Add the new filter to the URL
-					newLocation += "?" + options.filterName + "=" + filterValue;
+					newLocation += "?" + filterName + "=" + filterValue;
 					
 					//Update the URL
 					document.location.hash = newLocation;
+				}
 			}
 			
 			function wrap(text, width) {
