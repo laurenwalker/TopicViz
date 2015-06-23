@@ -37,10 +37,7 @@ jQuery(document).ready(function($) {
 				    .attr("height", height)
 				    .attr("viewBox", "0,0," + width + "," + height*scale);
 				
-				//write intro text
-      		     var intro = document.getElementById("introtext").innerHTML;
-        		 $("#sidetext").html(intro);
-				
+        		showText();
 				drawArcs();
 				drawNodes();
 				setupFilters();				
@@ -80,8 +77,11 @@ jQuery(document).ready(function($) {
 					    	  return colors[d.data[categoryID]]; 
 					    	})
 					      //This will happen when a user clicks on an arc
-				          .on("click", function(d){ 
-				        	  selectCategory(this, d.data.categoryID);
+				          .on("click", function(d){
+				        	  if(d3.select(this).classed("selected"))
+				        		  reset();
+				        	  else
+				        		  selectCategory(this, d.data.categoryID);
 					      })
 					      .attr("transform", "translate(" + width/2 + ", " + height/2 + ")");
 					  
@@ -118,8 +118,13 @@ jQuery(document).ready(function($) {
 							  return d.id;
 						  })
 						  .on("click", function(d){
-							//Get the arc path that corresponds to this label
-							selectCategory(document.getElementById("arc-" + d.id), d.id);
+							  //Get the arc path that corresponds to this label
+							  var arc = document.getElementById("arc-" + d.id);
+							
+							  if(d3.select(arc).classed("selected"))
+				        		  reset();
+							  else
+								selectCategory(arc, d.id);
 						  })
 						  .append("textPath")
 				   	      .text(function(d) { 
@@ -460,38 +465,31 @@ jQuery(document).ready(function($) {
 			 * Select Category - Selects the specified category and "filter" the nodes related to that category
 			 *************************************************************************************/
 			function selectCategory(element, category){
-				  //If this arc is already selected...
-	        	  if(d3.select(element).classed("selected")){
-	        		 reset();
-	        	  }
-	        	  // If this is a new selection...
-	        	  else{
-	        		  resetFilters();
+        		  resetFilters();
 
-	        		  //Select all the other arcs and color them as inactive
-	        		  $("path.arc").css("fill", (configuration.inactiveArcColor || "#F0F0F0"));
-	        		  $(".arc-label").addClass("inactive");
-	        		  
-	        		  //Select any other arc that is marked as "selected" and remove that class
-	        		  $("path.arc.selected").each(function(i, arc){
-	        			  var newClasses = $(arc).attr("class").replace("selected", "");
-		    	          $(arc).attr("class", newClasses);
-	        		  });
-	        		  
-	        		  //Then select the active arc and recolor it as its original color
-	        		  var currentClasses = $(element).attr("class");
-	        		  $(element)
-	    	            .css("fill", colors[category])
-	    	            .attr("class", currentClasses + " selected");
-	        		  
-	    	          //Call our function that will manipulate the nodes for this category
-	        		  selectNodes(category);
-	        		  
-	        		  //Show the category in the side text
-		        	  var projectText = document.getElementById("cat-info-" + category); 
-		        	  $(projectText).find("h1").css("color", colors[category]);
-		        	  $("#sidetext").html(projectText.innerHTML);
-	        	  }
+        		  //Select all the other arcs and color them as inactive
+        		  $("path.arc").css("fill", (configuration.inactiveArcColor || "#F0F0F0"));
+        		  $(".arc-label").addClass("inactive");
+        		  
+        		  //Select any other arc that is marked as "selected" and remove that class
+        		  $("path.arc.selected").each(function(i, arc){
+        			  var newClasses = $(arc).attr("class").replace("selected", "");
+	    	          $(arc).attr("class", newClasses);
+        		  });
+        		  
+        		  //Then select the active arc and recolor it as its original color
+        		  var currentClasses = $(element).attr("class");
+        		  $(element)
+    	            .css("fill", colors[category])
+    	            .attr("class", currentClasses + " selected");
+        		  
+    	          //Call our function that will manipulate the nodes for this category
+        		  selectNodes(category);
+        		  
+        		  //Show the category in the side text
+	        	  var projectText = document.getElementById("cat-info-" + category); 
+	        	  $(projectText).find("h1").css("color", colors[category]);
+	        	  $("#sidetext").html(projectText.innerHTML);
 			}
 			
 			/************************************************************************************
@@ -532,12 +530,12 @@ jQuery(document).ready(function($) {
 	  		  	$(".arc-label").removeClass("inactive");
 	  		  
 	  		  	//Make the new list of classes and add them
-	  		  	var prevSelected = $(".arc-label.selected");
+	  		  	var prevSelected = $("path.arc.selected");
 	  		  	var newClasses = prevSelected.attr("class").replace("selected", "");
 	  		  	prevSelected.attr("class", newClasses);
 	  		  
 	  		  	//change the text back to the original
-	  		  	$("#sidetext").html(intro);
+	  		  	showText();
 			}
 			
 			function resetFilters(){
@@ -678,13 +676,19 @@ jQuery(document).ready(function($) {
 			/************************************************************************************
 			 * Simple Expand/Collapse for long text
 			 *************************************************************************************/	
-			$(".expander").on("click", function(e){
-				var targetID = $(e.target).attr("data-target") || $(e.target).parents("[data-target]").attr("data-target");
-				
-				var targetElement = $("#" + targetID);
-				targetElement.slideToggle();
-			});
-	
+			function showText() {
+				//write intro text
+     		     var intro = document.getElementById("introtext").innerHTML;
+     		     $("#sidetext").html(intro);
+       		 
+				$(".expander").on("click", function(e){
+					var targetID = $(e.target).attr("data-target") || $(e.target).parents("[data-target]").attr("data-target");
+					
+					var targetElement = $("#" + targetID);
+					targetElement.slideToggle();
+				});
+			}
+			
 			});
 		});
 	});
