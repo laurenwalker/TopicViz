@@ -299,6 +299,7 @@ jQuery(document).ready(function($) {
 					  	            	 $("#node-info .node-summary").html(summary).addClass(type);
 					  	            	 
 					  	            	 $("#sidetext").html(document.getElementById("node-info").innerHTML);	
+ 					  					 $(".button.reset").removeClass("hidden");
 					  	              });
 
 					//************** Show a tooltip with node details when the node is moused over ************//
@@ -458,7 +459,7 @@ jQuery(document).ready(function($) {
 				  })
 				  .style("stroke", function(d){
 					  return colors[$(this).attr("data-category")];
-				  });
+				  });				
 			}
 			
 			/************************************************************************************
@@ -490,6 +491,7 @@ jQuery(document).ready(function($) {
 	        	  var projectText = document.getElementById("cat-info-" + category); 
 	        	  $(projectText).find("h1").css("color", colors[category]);
 	        	  $("#sidetext").html(projectText.innerHTML);
+	        	  $(".button.reset").removeClass("hidden");
 			}
 			
 			/************************************************************************************
@@ -531,11 +533,14 @@ jQuery(document).ready(function($) {
 	  		  
 	  		  	//Make the new list of classes and add them
 	  		  	var prevSelected = $("path.arc.selected");
-	  		  	var newClasses = prevSelected.attr("class").replace("selected", "");
-	  		  	prevSelected.attr("class", newClasses);
-	  		  
+	  		  	if(prevSelected.length > 0){
+	  		  		var newClasses = prevSelected.attr("class").replace("selected", "");
+	  		  		prevSelected.attr("class", newClasses);
+	  		  	}
+	  		  	
 	  		  	//change the text back to the original
 	  		  	showText();
+	  		    $(".button.reset").addClass("hidden");
 			}
 			
 			function resetFilters(){
@@ -547,10 +552,11 @@ jQuery(document).ready(function($) {
 			 *************************************************************************************/	
 			function setupFilters(){
 				var filterElements = $("form.filters .filter"),
-					submitButton   = $("form.filters .button");
+					submitButton   = $("form.filters .button")
+					resetButton    = $(".reset.button");
 				
 				//When a user types anything in the filter input, check if it is the 'Enter' key and if so, submit the value as a filter query
-				$(filterElements).on("keypress", function(e){
+				filterElements.on("keypress", function(e){
 					//Only proceed if the user pressed Enter
 					if(e.keyCode != 13) return;
 					
@@ -568,7 +574,7 @@ jQuery(document).ready(function($) {
 					filterNodes(options);	
 				});
 				
-				
+				resetButton.on("click", reset);
 			}
 			
 			/************************************************************************************
