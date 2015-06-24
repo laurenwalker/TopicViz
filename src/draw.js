@@ -469,19 +469,21 @@ jQuery(document).ready(function($) {
         		  resetFilters();
 
         		  //Select all the other arcs and color them as inactive
-        		  $("path.arc").css("fill", (configuration.inactiveArcColor || "#F0F0F0"));
-        		  $(".arc-label").addClass("inactive");
+        		  $("path.arc").css("fill", (configuration.inactiveArcColor || "#F0F0F0")).css("opacity", ".3");
+        		  $(".arc-label").css("opacity", ".3");
         		  
         		  //Select any other arc that is marked as "selected" and remove that class
         		  $("path.arc.selected").each(function(i, arc){
         			  var newClasses = $(arc).attr("class").replace("selected", "");
 	    	          $(arc).attr("class", newClasses);
         		  });
+        		  $(".arc-label[data-category='" + category + "']").css("opacity", 1);
         		  
         		  //Then select the active arc and recolor it as its original color
         		  var currentClasses = $(element).attr("class");
         		  $(element)
     	            .css("fill", colors[category])
+    	            .css("opacity", "1")
     	            .attr("class", currentClasses + " selected");
         		  
     	          //Call our function that will manipulate the nodes for this category
@@ -528,10 +530,8 @@ jQuery(document).ready(function($) {
 				//Change all the other arc colors back to normal
 	  		  	$("path.arc").css("fill", function(){
 	  			  return colors[$(this).attr("data-category")];
-	  		  	});
-	  		  
-	  		  	//Mark all category arcs as inactive
-	  		  	$(".arc-label").removeClass("inactive");
+	  		  	}).css("opacity", "1");
+	  		  	$(".arc-label").css("opacity", "1");
 	  		  
 	  		  	//Make the new list of classes and add them
 	  		  	var prevSelected = $("path.arc.selected");
