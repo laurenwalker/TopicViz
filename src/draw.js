@@ -375,6 +375,7 @@ jQuery(document).ready(function($) {
 					function start(){
 						force.stop();
 						window.clearTimeout(timeout);
+						filterNodes();
 					}
 							
 					allNodes.transition()
@@ -456,10 +457,10 @@ jQuery(document).ready(function($) {
 					  return row[0][categoryName];
 				  })
 				  .style("fill", function(d){
-					  return colors[$(this).attr("data-category")];
+					  return colors[category];
 				  })
 				  .style("stroke", function(d){
-					  return colors[$(this).attr("data-category")];
+					  return colors[category];
 				  });				
 			}
 			
@@ -556,7 +557,24 @@ jQuery(document).ready(function($) {
 			 * Setup Filters - Listen to filter inputs
 			 *************************************************************************************/	
 			function setupFilters(){
+				
+				//Get any filters from the URL and add them to the app filter list
 				window.filterList = new Array();
+				var filterStrings = window.location.hash.split("?");
+				
+				for(var i=0; i<filterStrings.length; i++){
+					if((filterStrings[i] == "#") || (filterStrings[i].indexOf("=") < 0)) continue;
+					
+					var filterParts    = filterStrings[i].split("="),
+						filterCategory = filterParts[0],
+						filterValue    = filterParts[1];
+					
+					filterList.push({
+							attribute   : filterNameMap[filterCategory],
+							filterName  : filterCategory,
+							value       : filterValue
+						});
+				}
 				
 				var filterElements = $("form.filters .filter"),
 					submitButton   = $("form.filters .button"),
@@ -574,9 +592,9 @@ jQuery(document).ready(function($) {
 					var inputElement = $(e.target);
 					
 					var options = {
-						attribute: inputElement.attr("data-table-col"),
-						filterName: inputElement.attr("name"),
-						value: inputElement.val()
+						filterName : inputElement.attr("name"),
+						attribute  : filterNameMap[filterName],
+						value      : inputElement.val()
 					}
 					filterList.push(options);
 					filterNodes();	
@@ -599,7 +617,7 @@ jQuery(document).ready(function($) {
 				$(".node").css("opacity", 0.05).css("fill", "#000000").css("stroke", "#000000");
 				
 				//Get the filter list from the URL and start a new URL hash string
-				var filtersFromURL     = document.location.hash.split("?"),
+				var filtersFromURL     = window.location.hash.split("?"),
 					newLocation        = "";
 				
 				//Iterate over each filter and make its nodes opaque and display a filter label				
