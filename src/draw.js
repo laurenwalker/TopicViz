@@ -447,6 +447,12 @@ jQuery(document).ready(function($) {
 			 * Select Nodes - Changes the node opacity and color to correspond to its weight for the given topic/category
 			 *************************************************************************************/	
 			function selectNodes(category){
+
+				var allWeights = utilities.pluck(table, "lda020selected_topicWeights_" + category);
+				
+				var minWeight = Math.min.apply(Math, allWeights),
+					maxWeight = Math.max.apply(Math, allWeights);
+				
 				d3.selectAll(".node")
 				  .transition()
 				  .duration(800)
@@ -454,7 +460,8 @@ jQuery(document).ready(function($) {
 					  var key = $(this).attr("data-key");
 					  var row = $.grep(table, function(e){ return e.primaryKey == key; });
 					  var categoryName = "lda020selected_topicWeights_" + category;
-					  return row[0][categoryName];
+					  //return row[0][categoryName];
+					  return (row[0][categoryName] - minWeight)/(maxWeight - minWeight);
 				  })
 				  .style("fill", function(d){
 					  return colors[category];
@@ -770,3 +777,18 @@ jQuery(document).ready(function($) {
 		});
 	});
 });
+
+var utilities = {};
+
+utilities.map = function(obj, iterator, context) {
+    var results = [];
+    if (obj == null) return results;
+    //if (nativeMap && obj.map === nativeMap) return obj.map(iterator, context);
+    for(var i=0; i<obj.length; i++){
+    	results[results.length] = iterator.call(context, obj[i], i, obj);
+    }
+    return results;
+}
+utilities.pluck = function(obj, key) {
+	    return utilities.map(obj, function(value){ return value[key]; });
+}
