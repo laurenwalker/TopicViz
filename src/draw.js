@@ -236,9 +236,10 @@ jQuery(document).ready(function($) {
 				  	            		      	  people   = row.AU,
 				  	            		      	  journal  = $(document.createElement("span")).addClass("journal").text(row.SO_clean.toLowerCase()),
 				  	            		      	  year     = $(document.createElement("span")).addClass("years").text(row.PY + ". "),
-				  	            		      	  summary  = $(document.createElement("div")).append(year, journal),
+				  	            		      	  abstrct  = $(document.createElement("p")).addClass("abstract").html(row.AB_Updated),
+				  	            		      	  summary  = $(document.createElement("div")).append(year, journal, abstrct),
 				  	            		      	  type     = "product",
-				  	            		      	  years    = "";					  	
+				  	            		      	  years    = "";	
 					  	            		  
 					  	            		  if(row.DI){
 					  	            			var shortType = row.DT.split(";", 1)[0].toLowerCase(),
