@@ -76,7 +76,8 @@ var categoryLabels = [
 
 //The filter categories map from displayed filter name -> table column (separated by spaces)
 var filterNameMap = {
-	person : "Project_Pis AU"
+	person : "Project_Pis AU",
+	keyword : "AB_Updated summary_for_TM TI Title_for_TM"
 }
 
 var configuration = {

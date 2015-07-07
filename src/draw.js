@@ -59,35 +59,35 @@ jQuery(document).ready(function($) {
 					    .value(function(d) { return 1; })
 					    .sort(null);
 						
-					  //Draw a group element to group our arcs
-					  var g = svg.selectAll(".arc")
-					      .data(pie(terms))
-					      .enter().append("g")
-					      .attr("class", "arcs");
+				   //Draw a group element to group our arcs
+				   var g = svg.selectAll(".arc")
+				       .data(pie(terms))
+				       .enter().append("g")
+				       .attr("class", "arcs");
 					
-					  //Draw the path for each arc
-					  g.append("path")
-					      .attr("d", arc)
-					      .attr("class", "arc")
-					      //Bind the categoryID to each arc so it is accessible via jQuery and d3
-					      .attr("data-category", function(d){ return d.data[categoryID]; })
-					      .attr("id", function(d){ return "arc-" + d.data[categoryID]; })
-					      .style("fill", function(d) { 
-					    	  //Find the color for this arc by finding it in the category->color map
-					    	  return colors[d.data[categoryID]]; 
-					    	})
-					      //This will happen when a user clicks on an arc
-				          .on("click", function(d){
-				        	  if(d3.select(this).classed("selected"))
-				        		  reset();
-				        	  else
-				        		  selectCategory(this, d.data.categoryID);
-					      })
-					      .attr("transform", "translate(" + width/2 + ", " + height/2 + ")");
+				   //Draw the path for each arc
+				   g.append("path")
+				      .attr("d", arc)
+				      .attr("class", "arc")
+				      //Bind the categoryID to each arc so it is accessible via jQuery and d3
+				      .attr("data-category", function(d){ return d.data[categoryID]; })
+				      .attr("id", function(d){ return "arc-" + d.data[categoryID]; })
+				      .style("fill", function(d) { 
+				    	  //Find the color for this arc by finding it in the category->color map
+				    	  return colors[d.data[categoryID]]; 
+				    	})
+				      //This will happen when a user clicks on an arc
+			          .on("click", function(d){
+			        	  if(d3.select(this).classed("selected"))
+			        		  reset();
+			        	  else
+			        		  selectCategory(this, d.data.categoryID);
+				      })
+				      .attr("transform", "translate(" + width/2 + ", " + height/2 + ")");
 					  
-					  var labels = svg.selectAll(".arc-label")
-								      .data(categoryLabels)
-								      .enter().append("g");
+				   var labels = svg.selectAll(".arc-label")
+							      .data(categoryLabels)
+							      .enter().append("g");
 					  	
 				    var idsAdded = new Array();
 					labels.append("text")
@@ -583,31 +583,52 @@ jQuery(document).ready(function($) {
 						});
 				}
 				
-				var filterElements = $("form.filters .filter"),
-					submitButton   = $("form.filters .button"),
-					resetButton    = $(".reset.button");
+				/* This function will get the filter information from a given input element and add it to the list of app filters */
+				function addFilter(inputElement){
+					//Check that this is a valid input element and value
+					if(!inputElement || !$(inputElement).length) return false;
+					if(!$(inputElement).val()) return false;
+						
+					var options = {
+						filterName : $(inputElement).attr("name"),
+						attribute  : filterNameMap[$(inputElement).attr("name")],
+						value      : $(inputElement).val()
+					}
+					
+					//Add this filter to the list and filter nodes
+					filterList.push(options);
+					filterNodes();
+				}
+				
+				var filterTextboxes = $("form.filters .filter"),
+				    filterSubmitBtn = $("form.filters .submit"),
+				    filterResetBtn  = $(".reset.button");
 				
 				//When a user types anything in the filter input, check if it is the 'Enter' key and if so, submit the value as a filter query
-				filterElements.on("keypress", function(e){
+				filterTextboxes.on("keypress", function(e){
 					//Only proceed if the user pressed Enter
 					if(e.keyCode != 13) return;
 					
 					//Prevent the form from submitting to the target/page refreshing
 					e.preventDefault();
 					
-					//Get the filter information
-					var inputElement = $(e.target);
-					
-					var options = {
-						filterName : inputElement.attr("name"),
-						attribute  : filterNameMap[filterName],
-						value      : inputElement.val()
-					}
-					filterList.push(options);
-					filterNodes();	
+					addFilter(e.target);
 				});
 				
-				resetButton.on("click", reset);
+				//When a user clicks a submit button in the filter form, add the filter
+				filterSubmitBtn.on("click", function(e){
+					//Prevent the form from submitting to the target/page refreshing
+					e.preventDefault();
+					
+					//Get the filter information
+					if(!$(e.target).attr("for")) return false;
+					
+					addFilter($("#" + $(e.target).attr("for")));					
+						
+				});
+				
+				//Reset all filters when the reset button is clicked
+				filterResetBtn.on("click", reset);
 			}
 			
 			/************************************************************************************
