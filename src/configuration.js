@@ -1,6 +1,10 @@
 /**
  *  ======== CONFIGURATION =======
  */
+
+//Base URL
+var baseUrl = "";
+	
 // Set up the category colors 
 //The first color is the arc background color. The second color is the label text color.
 var colors = {

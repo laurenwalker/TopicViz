@@ -3,20 +3,23 @@ body{
 	font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
 	font-weight: 300;
 }
-a{
+#topic-viz-app{
+	position: relative;
+}
+#topic-viz-app a{
 	color: #97b749;
 	text-decoration: none;
 }
-a:hover{
+#topic-viz-app a:hover{
 	color: #49B78F;
 	transition: color .5s;
 }
-.clear{
+#topic-viz-app .clear{
 	float: none;
 	clear: both;
 }
 /***************** SVG Drawing ******************/
-#svg-container{
+#topic-viz-app #svg-container{
 	width: auto;
 	min-width: 800px;
 	min-height: 800px;
@@ -24,35 +27,35 @@ a:hover{
 	margin-right: 20px;
 	margin-top: 20px;
 }
-.arc path {
+#topic-viz-app .arc path {
   stroke: #FFF;
   stroke-width: 0px;
   cursor: pointer;
 }
-.arc-label{
+#topic-viz-app .arc-label{
 	font-size: 16px;
 	font-weight: bold;
 	cursor: pointer;
 	fill: #222;
 }
-.arc-label.inactive{
+#topic-viz-app .arc-label.inactive{
 	fill: #999;
 }
-.node:hover{
+#topic-viz-app .node:hover{
 	stroke-width: 8px;
 	cursor: pointer;
 }
-#node-tooltip{
+#topic-viz-app #node-tooltip{
 	display: none;
 }
-#node-tooltip > rect{
+#topic-viz-app #node-tooltip > rect{
 	fill: rgba(0,0,0,0.8);
 }
-#node-tooltip > text{
+#topic-viz-app #node-tooltip > text{
 	fill: white;
 }
 /***************** Text ******************/
-.container{
+#topic-viz-app .container{
 	float: left;
 	width: calc(100% - 870px - 40px);
 	color: white;
@@ -63,19 +66,19 @@ a:hover{
     margin-top: 20px;
     background-color: rgba(0,0,0,0.7);
 }
-.container > h1{
+#topic-viz-app .container > h1{
   font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
   margin-top: 5px;
   color: #97b749;
   font-size: 2em;
 }
-.container h1.project{
+#topic-viz-app .container h1.project{
 	font-weight: bold;
 }
-.replacement-text{
+#topic-viz-app .replacement-text{
 	display: none;
 }
-.pretitle{
+#topic-viz-app .pretitle{
   color: #CCC;
   font-weight: normal;
   text-transform: uppercase;
@@ -83,87 +86,91 @@ a:hover{
   clear: right;
   display: block;	
 }
-.node-people > .pretitle,
-.project > .pretitle{
+#topic-viz-app .node-people > .pretitle,
+#topic-viz-app .project > .pretitle{
 	text-transform: none;
 }
-.node-title > .pretitle{
+#topic-viz-app .node-title > .pretitle{
 	font-size: .8em;
 }
-.node-summary .journal{
+#topic-viz-app .node-summary .journal{
 	text-transform: capitalize;
 }
-.project.terms{
+#topic-viz-app .project.terms{
 	font-weight: bold;
 }
-.product.node-summary,
-.product.node-years{
+#topic-viz-app .product.node-summary,
+#topic-viz-app .product.node-years{
 	display: inline;
 }
-p.smaller {
-	color: #CCCCCC;
-	font-size: .8em;
+#topic-viz-app p.smaller {
+	font-size: 1em;
+	margin-top: 10px;
 }
-p.small{
+#topic-viz-app p.small{
 	font-size: .9em;
 	line-height: 1.4em;
 }
-ul.small{
+#topic-viz-app ul.small{
 	font-size: .9em;
 	line-height: 1.4em;
 }
-.important{
+#topic-viz-app .important{
 	line-height: 1.3em;
 }
-.important img{
+#topic-viz-app .important img{
 	float: left;
 	margin-right: 20px;
 	margin-bottom: 5px;
 	width: 90px;
 	height: auto;
 }
-h4.title{
+#topic-viz-app h4.title{
   margin-bottom: 5px;
   font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
   font-weight: 90;
 }
-h1.project {
+#topic-viz-app h1.project {
 	font-size: 20px;
 }	
-a.more-link{
+#topic-viz-app a.more-link,
+#topic-viz-app .filters input[type="submit"]{
 	display: inline-block;
 	width: auto;
 	border: 1px solid #97b749;
+	background-color: transparent;
 	padding: 8px;
 	font-size: .9em;
 	text-decoration: none;
 	margin-top: 20px;
 }
-a.more-link:hover{
+#topic-viz-app a.more-link:hover{
 	border-color: #49B78F;
 }
-a.more-link > .icon{
+#topic-viz-app a.more-link > .icon{
 	margin-left: 5px;
 }
-.expander.title{
+#topic-viz-app .expander.title{
 	display: block;
 	line-height: 1.2em;	
 }
-.collapsed{
+#topic-viz-app .collapsed{
 	display: none;
 }
 
 /**************** Filters ******************/
-legend{
+#topic-viz-app legend{
 	font-size: 1.2em;
 	font-weight: bold;
+	margin-bottom: 0px;
+	color: white;
 }
-fieldset{
+#topic-viz-app fieldset{
 	border-color: #666666;
 	padding: 20px;
 }
-.filters input[type="text"],
-.filters input[type="submit"] {
+#topic-viz-app .filters input[type="text"],
+#topic-viz-app .filters input[type="submit"] {
   padding: 10px;
   border: solid 1px #dcdcdc;
   transition: box-shadow 0.3s, border 0.3s;
@@ -174,26 +181,29 @@ fieldset{
   display: inline-block;
   margin-right: 5px;
 }
-.filters input[type="submit"]{
+#topic-viz-app .filters input[type="submit"]{
 	width: auto;
   	min-width: 25px;
  	-webkit-appearance: none;
  	-moz-appearance: none;
  	appearance: none;
-  	background-color: #FFFFD8;
+  	border: 1px solid #97b749;
+  	color: #97b749;
+  	height: 3em;
 }
-.filters input[type="text"]:focus,
-.filters input[type="text"].focus {
+#topic-viz-app .filters input[type="text"]:focus,
+#topic-viz-app .filters input[type="text"].focus {
   border: solid 1px #707070;
   box-shadow: 0 0 5px 1px #969696;
 }
-.filters label{
-	margin-top: 20px;
+#topic-viz-app .filters label{
+	margin-top: 0px;
 	display: block;
+	font-weight: normal;
 }
-.button.reset{
+#topic-viz-app .button.reset{
 	position: absolute;
-	top: 35px;
+	top: 22px;
     left: 775px;
 	border: none;
 	-webkit-border-radius: 2px;
@@ -211,64 +221,72 @@ fieldset{
 	background: linear-gradient(to bottom, rgba(242,245,246,1) 0%,rgba(227,234,237,1) 37%,rgba(200,215,220,1) 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f5f6', endColorstr='#c8d7dc',GradientType=0 ); /* IE6-9 */
 }
-.button.reset.hidden{
+#topic-viz-app .button.reset.hidden{
 	display: none;
 }
-.filters .filter.label{
+#topic-viz-app .filters .filter.label{
   display: inline-block;
   background-color: #97b749;
   padding: 5px 5px;
   border-radius: 3px;
   color: #2D4C29;
   font-weight: bold;
+  font-size: 1em;
   float: left;
   margin-right: 10px;
   margin-top: 10px;
 }
-.filters .filter.label .close{
+#topic-viz-app .filters .filter.label .close{
 	color: rgb(94, 108, 94);
 	cursor: pointer;
 	margin-left: 10px;
+	opacity: 1;
 }
 
 /***************** White Theme ******************/
-body.white {
+body.white{
     background-color: #FFF;
 }
 
-.white .container {
+.white #topic-viz-app .container{
     color: #333;
     font-weight: normal;
 	background-color: rgba(153, 153, 153, 0.1);
 }
 
-.white .smaller {
+.white #topic-viz-app .smaller {
     color: #666;
     font-weight: normal;
 }
 
-.white .pretitle {
+.white #topic-viz-app .pretitle {
     color: #888;
 }
 
-.white .more-link {
+.white #topic-viz-app .more-link {
     border: 1px solid #758E39;
     color: #758E39;
+}
+.white #topic-viz-app legend{
+	color: #333;	
+}
+.white #topic-viz-app .filters input[type="submit"]{
+	border-color: white;
 }
 
 /***************** Smaller Windows ******************/
 @media all and (max-width: 1150px){
-	.container{
+	#topic-viz-app .container{
 		float: none;
 		width: auto;
 		clear: both;
 		padding: 40px;
 		margin-top: 20px;
 	}
-	.container h1{
+	#topic-viz-app .container h1{
 		text-align: center;
 	}
-	#svg-container{
+	#topic-viz-app #svg-container{
 		float: none;
 		width: 850px;
 		margin-left: auto;

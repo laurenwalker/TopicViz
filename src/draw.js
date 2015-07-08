@@ -1,9 +1,5 @@
 //Wait for the document to be ready
 jQuery(document).ready(function($) {
-	/**
-	 *  ======== OPTIONS =======
-	 */
-	
 	
 	/** Pull in all of the data first 
 	* We have three sources of data
@@ -12,9 +8,9 @@ jQuery(document).ready(function($) {
 	*		- { nodeKey: [x, y] }
 	*	- filtered_table: The full table with (almost) all information about each node. Will get pulled in as an array of nodes objects. 
 	*/
-	d3.tsv("data/Top16Terms.tab", function(error, terms) {
-		$.getJSON("data/xy_top100.json", function(coords){
-			d3.tsv("data/filtered_table.txt", function(err, table){
+	d3.tsv(baseUrl + "data/Top16Terms.tab", function(error, terms) {
+		$.getJSON(baseUrl + "data/xy_top100.json", function(coords){
+			d3.tsv(baseUrl + "data/filtered_table.txt", function(err, table){
 				
 				//Get the column names from the terms data
 				var categoryID = Object.keys(terms[0])[0];
@@ -106,7 +102,7 @@ jQuery(document).ready(function($) {
 							  //Determine the horizontal offset by finding the leftover space in the arc width and divinding by two, essentially "centering" the text
 							  //Create a DOM element with the label text inside in order to get a pixel width
 							  var span = $(document.createElement("span")).text(d.text).addClass("arc-label");
-							  $("body").append(span);
+							  $("#topic-viz-app").prepend(span);
 							  var textWidth = $(span).width();
 							  $(span).detach(); //remove it, it was only temporary
 							  
@@ -211,7 +207,7 @@ jQuery(document).ready(function($) {
 										.attr("width", rectLength)
 										.attr("height", rectLength);
 						 
-					var allNodes = d3.selectAll(".node")
+					var allNodes = nodeGroup.selectAll(".node")
 					  	              .attr("data-category", function(d){
 					  	            	  return d.category;
 					  	              })
@@ -453,7 +449,7 @@ jQuery(document).ready(function($) {
 				var minWeight = Math.min.apply(Math, allWeights),
 					maxWeight = Math.max.apply(Math, allWeights);
 				
-				d3.selectAll(".node")
+				svg.selectAll(".node")
 				  .transition()
 				  .duration(800)
 				  .style("opacity", function(d){
@@ -520,7 +516,7 @@ jQuery(document).ready(function($) {
 			 * Reset Nodes - Resets the color/opacity of the nodes
 			 *************************************************************************************/
 			function resetNodes(){
-				d3.selectAll(".node")
+				svg.selectAll(".node")
 				  .transition()
 				  .duration(800)
 				  .style("opacity", 1)
@@ -642,7 +638,7 @@ jQuery(document).ready(function($) {
 				}
 				
 				//De-filter all the nodes first
-				$(".node").css("opacity", 0.05).css("fill", "#000000").css("stroke", "#000000");
+				$("svg .node").css("opacity", 0.05).css("fill", "#000000").css("stroke", "#000000");
 				
 				//Get the filter list from the URL and start a new URL hash string
 				var filtersFromURL     = window.location.hash.split("?"),
@@ -655,7 +651,7 @@ jQuery(document).ready(function($) {
 						filterValue = options.value,
 						filterName  = options.filterName;
 	
-					d3.selectAll(".node")
+					svg.selectAll(".node")
 					  .transition()
 					  .duration(800)
 					  .each(function(d){
