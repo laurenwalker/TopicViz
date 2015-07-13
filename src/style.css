@@ -116,15 +116,16 @@ body,
 	font-size: .9em;
 	line-height: 1.4em;
 }
-#topic-viz-app .important{
-	line-height: 1.3em;
-}
-#topic-viz-app .important img{
+#topic-viz-app .intro-img{
 	float: left;
-	margin-right: 20px;
-	margin-bottom: 5px;
-	width: 90px;
-	height: auto;
+	width: 15%;
+}
+#topic-viz-app .intro-img img{
+	width: 100%;
+}
+#topic-viz-app .intro-text{
+	float: right;
+	width: 80%;
 }
 #topic-viz-app h4.title{
   margin-bottom: 5px;
@@ -158,7 +159,21 @@ body,
 #topic-viz-app .collapsed{
 	display: none;
 }
-
+#topic-viz-app ul.four-col{
+	padding-left: 0px;
+}
+#topic-viz-app ul.four-col > li {
+  width: 25%;
+  float: left;
+  margin-bottom: 5px;
+  list-style-type: none;
+}
+#topic-viz-app ul.four-col > li:nth-child(3n+1){
+	clear: right;
+}
+#topic-viz-app ul.four-col > li:nth-child(4n+1){
+	clear: left;
+}
 /**************** Filters ******************/
 #topic-viz-app legend{
 	font-size: 1.2em;
@@ -181,6 +196,7 @@ body,
   float: left;
   display: inline-block;
   margin-right: 5px;
+  color: #333;
 }
 #topic-viz-app .filters input[type="submit"]{
 	width: auto;
@@ -292,5 +308,22 @@ body.white{
 		width: 850px;
 		margin-left: auto;
 		margin-right: auto;
+	}
+}
+@media all and (min-width: 1151px) and (max-width: 1400px){
+	#topic-viz-app ul.four-col > li{
+		width: 45%;
+	}
+	#topic-viz-app ul.four-col > li:nth-child(3n+1){
+		clear: none;
+	}
+	#topic-viz-app ul.four-col > li:nth-child(4n+1){
+		clear: none;
+	}
+	#topic-viz-app ul.four-col > li:nth-child(n+1){
+		clear: right;
+	}
+	#topic-viz-app ul.four-col > li:nth-child(2n+1){
+		clear: left;
 	}
 }

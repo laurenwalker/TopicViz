@@ -191,7 +191,7 @@ jQuery(document).ready(function($) {
 								   .start();
 
 					//Start the timeout so the animation doesn't last forever
-					var timeout = window.setTimeout(start, 12000);
+					var timeout = window.setTimeout(start, 16000);
 					
 					var nodeGroup = svg.append("g")
 					                   .attr("class", "node-group");
@@ -781,6 +781,14 @@ jQuery(document).ready(function($) {
 				//write intro text
      		     var intro = document.getElementById("introtext").innerHTML;
      		     $("#sidetext").html(intro);
+     		     
+     		     //Color any text that is marked as category-related
+     		     $(".cat-color").each(function(i, el){
+     		    	 var category = $(el).attr("data-category");
+     		    	 if(!category) return false;
+     		    	 
+     		    	 $(el).css("color", colors[category]); 
+     		     });
        		 
 				$(".expander").on("click", function(e){
 					var targetID = $(e.target).attr("data-target") || $(e.target).parents("[data-target]").attr("data-target");
