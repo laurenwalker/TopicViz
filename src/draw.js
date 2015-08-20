@@ -458,10 +458,10 @@ jQuery(document).ready(function($) {
 					  var categoryName = "lda020selected_topicWeights_" + category;
 					  //return row[0][categoryName];
 					  return (row[0][categoryName] - minWeight)/(maxWeight - minWeight);
-				  })
+				  })/*
 				  .style("fill", function(d){
 					  return colors[category];
-				  })
+				  })*/
 				  .style("stroke", function(d){
 					  return colors[category];
 				  });				
