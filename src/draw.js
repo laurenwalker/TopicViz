@@ -10,7 +10,7 @@ jQuery(document).ready(function($) {
 	*/
 	d3.tsv(baseUrl + "data/Top16Terms.tab", function(error, terms) {
 		$.getJSON(baseUrl + "data/xy_top100.json", function(coords){
-			d3.tsv(baseUrl + "data/filtered_table.txt", function(err, table){
+			d3.tsv(baseUrl + "data/filtered_table.txt?v=1.0.1", function(err, table){
 				
 				//Get the column names from the terms data
 				var categoryID = Object.keys(terms[0])[0];
@@ -148,7 +148,7 @@ jQuery(document).ready(function($) {
 						var node = $.grep(table, function(e){ return e.primaryKey == key; });
 						var category100 = node[0].maxtopic100selected_id;
 						var category20 = node[0].maxtopic20selected_id;
-						var isProduct = (node[0].product_oid.length > 0)? true : false;
+						var isProduct = (!node[0].product_oid || (node[0].product_oid == "NA")) ? false : true;
 						
 						var d = {
 							x: coords[key][0],
