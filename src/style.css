@@ -105,7 +105,7 @@ body,
 	display: inline;
 }
 #topic-viz-app p.smaller {
-	font-size: 1em;
+	font-size: .8em;
 	margin-top: 10px;
 }
 #topic-viz-app p.small{
